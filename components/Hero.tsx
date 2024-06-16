@@ -5,10 +5,11 @@ import TailwindcssButtons from "./ui/tailwindcss-buttons";
 import { FaLocationArrow, FaLinkedin, FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import "@/app/globals.css";
+import Link from "next/link";
 
 const Hero = () => {
   return (
-    <div className="pb-20 pt-36 relative">
+    <div className=" pt-20 relative">
       <div>
         <Spotlight
           className="-top-40 -left-10 md:-left-32 md:-top-20 h-screen"
@@ -23,7 +24,7 @@ const Hero = () => {
           fill="white"
         />
       </div>
-      <div className="h-screen w-full dark:bg-black-100 bg-white dark:bg-grid-white/[0.04] bg-grid-black/[0.3] flex items-center justify-center absolute top-0 left-0">
+      <div className="h-full w-full dark:bg-black-100 bg-white dark:bg-grid-white/[0.04] bg-grid-black/[0.3] flex items-center justify-center absolute top-0 left-0">
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black-100 bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
       </div>
       <div className="flex justify-center relative my-20 z-10 items-center gap-10">
@@ -39,13 +40,13 @@ const Hero = () => {
           <p className="text-left capitalize md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
             hi, I&apos;m Lakshya Roy, a Frontend Developer from India.
           </p>
-          <a href="#about">
+          <Link href="/about" className="w-fit">
             <TailwindcssButtons
-              title="Show My Work"
+              title="Know About me!"
               icon={<FaLocationArrow />}
               position="right"
             />
-          </a>
+          </Link>
         </div>
         {/* right */}
         <div className="w-1/2 md:max-w-2xl lg:max-w-[60vw] flex justify-center items-center">
@@ -69,7 +70,7 @@ const Hero = () => {
             <img
               src="https://cyfoniireact-eb8gshhgc-themesflat.vercel.app/static/media/banner.b41e8bd3384755f8ff18.png"
               alt="Its me the developer of the website, Lakshya Roy"
-              className="rounded-[130px] "
+              className="rounded-[130px]"
               loading="lazy"
             />
           </div>
