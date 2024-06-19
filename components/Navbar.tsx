@@ -30,7 +30,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="w-full mx-auto sm:px-10 px-5 py-2 fixed top-0 z-20 flex justify-between items-center bg-primary ">
+    <nav className="w-full mx-auto sm:px-10 px-5 py-2 fixed  top-0 z-[60] flex justify-between items-center bg-primary ">
       <Link href={"/"} className="text-3xl font-bold text-blue-100">
         <div className="flex items-center gap-2 justify-center">
           <Image
