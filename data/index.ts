@@ -69,38 +69,246 @@ export const gridItems = [
   },
 ];
 
-export const projects = [
+// export const projects = [
+//   {
+//     id: 1,
+//     title: "3D Solar System Planets to Explore",
+//     des: "Explore the wonders of our solar system with this captivating 3D simulation of the planets using Three.js.",
+//     img: "/p1.svg",
+//     iconLists: ["/re.svg", "/tail.svg", "/ts.svg", "/three.svg", "/fm.svg"],
+//     link: "/ui.earth.com",
+//   },
+//   {
+//     id: 2,
+//     title: "Yoom - Video Conferencing App",
+//     des: "Simplify your video conferencing experience with Yoom. Seamlessly connect with colleagues and friends.",
+//     img: "/p2.svg",
+//     iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/stream.svg", "/c.svg"],
+//     link: "/ui.yoom.com",
+//   },
+//   {
+//     id: 3,
+//     title: "AI Image SaaS - Canva Application",
+//     des: "A REAL Software-as-a-Service app with AI features and a payments and credits system using the latest tech stack.",
+//     img: "/p3.svg",
+//     iconLists: ["/re.svg", "/tail.svg", "/ts.svg", "/three.svg", "/c.svg"],
+//     link: "/ui.aiimg.com",
+//   },
+//   {
+//     id: 4,
+//     title: "Animated Apple Iphone 3D Website",
+//     des: "Recreated the Apple iPhone 15 Pro website, combining GSAP animations and Three.js 3D effects..",
+//     img: "/p4.svg",
+//     iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
+//     link: "/ui.apple.com",
+//   },
+//   {
+//     id: 5,
+//     title: "Animated Apple Iphone 3D Website",
+//     des: "Recreated the Apple iPhone 15 Pro website, combining GSAP animations and Three.js 3D effects..",
+//     img: "/p4.svg",
+//     iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
+//     link: "/ui.apple.com",
+//   },
+//   {
+//     id: 6,
+//     title: "Animated Apple Iphone 3D Website",
+//     des: "Recreated the Apple iPhone 15 Pro website, combining GSAP animations and Three.js 3D effects..",
+//     img: "/p4.svg",
+//     iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
+//     link: "/ui.apple.com",
+//   },
+// ];
+
+export const Projects = [
   {
-    id: 1,
-    title: "3D Solar System Planets to Explore",
-    des: "Explore the wonders of our solar system with this captivating 3D simulation of the planets using Three.js.",
-    img: "/p1.svg",
-    iconLists: ["/re.svg", "/tail.svg", "/ts.svg", "/three.svg", "/fm.svg"],
-    link: "/ui.earth.com",
+    name: "Disney+ Hotstar Clone",
+    description:
+      "This repository, created by Lakshya Roy, is a web application that mimics the features of the well-known streaming platform, Disney+ Hotstar.",
+    tags: [
+      {
+        name: "React",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "Firebase",
+        color: "green-text-gradient",
+      },
+      {
+        name: "TMDB API",
+        color: "green-text-gradient",
+      },
+      {
+        name: "AntD",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "Styled Components",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "Redux Toolkit",
+        color: "pink-text-gradient",
+      },
+    ],
+    image: "https://manage-pro.netlify.app/webpage.png",
+    source_code_link: "https://github.com/LakshyaRoy/DisneyPlus-Clone",
+    website_link: "https://showtimeflicks.netlify.app/",
   },
   {
-    id: 2,
-    title: "Yoom - Video Conferencing App",
-    des: "Simplify your video conferencing experience with Yoom. Seamlessly connect with colleagues and friends.",
-    img: "/p2.svg",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/stream.svg", "/c.svg"],
-    link: "/ui.yoom.com",
+    name: "Disney+ Hotstar Clone",
+    description:
+      "This repository, created by Lakshya Roy, is a web application that mimics the features of the well-known streaming platform, Disney+ Hotstar.",
+    tags: [
+      {
+        name: "React",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "Firebase",
+        color: "green-text-gradient",
+      },
+      {
+        name: "TMDB API",
+        color: "green-text-gradient",
+      },
+      {
+        name: "AntD",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "Styled Components",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "Redux Toolkit",
+        color: "pink-text-gradient",
+      },
+    ],
+    image: "https://manage-pro.netlify.app/webpage.png",
+    source_code_link: "https://github.com/LakshyaRoy/DisneyPlus-Clone",
+    website_link: "https://showtimeflicks.netlify.app/",
   },
   {
-    id: 3,
-    title: "AI Image SaaS - Canva Application",
-    des: "A REAL Software-as-a-Service app with AI features and a payments and credits system using the latest tech stack.",
-    img: "/p3.svg",
-    iconLists: ["/re.svg", "/tail.svg", "/ts.svg", "/three.svg", "/c.svg"],
-    link: "/ui.aiimg.com",
+    name: "CryptBlaze",
+    description:
+      "This Our website uses Rapid API for live cryptocurrency info. It's easy to use, shows many digital coins, and helps people make smart choices.",
+    tags: [
+      {
+        name: "React",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "API",
+        color: "green-text-gradient",
+      },
+      {
+        name: "axios",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "chart.js",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "antd",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "react-redux",
+        color: "pink-text-gradient",
+      },
+    ],
+    image: "https://manage-pro.netlify.app/webpage.png",
+    source_code_link: "https://github.com/LakshyaRoy/Crypto-Sites",
+    website_link: "https://cryptblaze.netlify.app/",
   },
   {
-    id: 4,
-    title: "Animated Apple Iphone 3D Website",
-    des: "Recreated the Apple iPhone 15 Pro website, combining GSAP animations and Three.js 3D effects..",
-    img: "/p4.svg",
-    iconLists: ["/next.svg", "/tail.svg", "/ts.svg", "/three.svg", "/gsap.svg"],
-    link: "/ui.apple.com",
+    name: "QuillBot Clone",
+    description:
+      "This is a dynamic website that is a clone of QuillBot Research Field. The website is built using React and Vite CSS, JS, RapidAPI, Axios, and Remix Icons.",
+    tags: [
+      {
+        name: "React+Vite",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "CSS",
+        color: "green-text-gradient",
+      },
+      {
+        name: "RapidAPI",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "JS",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "Axios",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "Remix Icons",
+        color: "pink-text-gradient",
+      },
+    ],
+    image: "https://manage-pro.netlify.app/webpage.png",
+    source_code_link: "https://github.com/LakshyaRoy/QuillBot-Clone",
+    website_link: "https://quillbotclone.netlify.app/",
+  },
+  {
+    name: "TV Show Booking Website",
+    description:
+      "This repository contains the source code and assets for a React-based Single Page Application (SPA) that allows users to select TV shows, view detailed information about them, and book movie tickets.",
+    tags: [
+      {
+        name: "React",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "API",
+        color: "green-text-gradient",
+      },
+      {
+        name: "HTML5",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "CSS3",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "JavaScript",
+        color: "pink-text-gradient",
+      },
+    ],
+    image: "https://manage-pro.netlify.app/webpage.png",
+    source_code_link:
+      "https://github.com/LakshyaRoy/ReactJs-Assignment/tree/main",
+    website_link: "https://incredible-babka-1a0aad.netlify.app/",
+  },
+  {
+    name: "Omnifood",
+    description:
+      "This is a responsive landing page for Omnifood, a fictional food delivery service. It's built using HTML, CSS, and JavaScript, and adapts to different devices including desktops, laptops, tablets, and smartphones.",
+    tags: [
+      {
+        name: "HTML5",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "CSS3",
+        color: "green-text-gradient",
+      },
+      {
+        name: "JavaScript",
+        color: "pink-text-gradient",
+      },
+    ],
+    image: "https://manage-pro.netlify.app/webpage.png",
+    source_code_link: "https://github.com/LakshyaRoy/Omnifood--project",
+    website_link: "https://omnifood-lakshya.netlify.app/",
   },
 ];
 
