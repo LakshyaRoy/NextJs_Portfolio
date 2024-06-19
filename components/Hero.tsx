@@ -6,6 +6,7 @@ import { FaLocationArrow, FaLinkedin, FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import "@/app/globals.css";
 import Link from "next/link";
+import LakshyaRoy from "@/assets/LakshyaRoy.png";
 
 const Hero = () => {
   return (
@@ -50,7 +51,7 @@ const Hero = () => {
         </div>
         {/* right */}
         <div className="w-1/2 md:max-w-2xl lg:max-w-[60vw] flex justify-center items-center">
-          <div className="heroImage relative bg-cover rounded-[130px] w-3/4 h-3/4 ">
+          <div className="heroImage relative bg-cover rounded-[130px]  ">
             <div className="beforeImg " />
             <div className="afterImg" />
             <div className="flex justify-center items-center w-[220px]  h-[70px] text-[#141414]  absolute BouncingCard ">
@@ -67,11 +68,10 @@ const Hero = () => {
                 <span className="text-sm">@LakshyaRoy </span>
               </div>
             </div>
-            <img
-              src="https://cyfoniireact-eb8gshhgc-themesflat.vercel.app/static/media/banner.b41e8bd3384755f8ff18.png"
-              alt="Its me the developer of the website, Lakshya Roy"
-              className="rounded-[130px]"
-              loading="lazy"
+            <Image
+              src={LakshyaRoy}
+              alt="I am standing along a podium with a laptop"
+              className="rounded-[100px] w-[350px] h-[460px] object-cover"
             />
           </div>
         </div>
