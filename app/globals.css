@@ -257,7 +257,7 @@
   -webkit-text-fill-color: transparent;
 }
 
-.SpecificCard {
+/* .SpecificCard {
   background: rgba(0, 3, 25, 0.25);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(4px);
@@ -270,17 +270,17 @@
 .swiper-button-prev::after {
   content: "";
   display: block;
-  width: 30px; /* Adjust size as needed */
-  height: 30px; /* Adjust size as needed */
+  width: 32px; 
+  height: 32px; 
   background-size: cover;
 }
 
 .swiper-button-next::after {
-  background-image: url("../public/rightArrow.svg"); /* Replace with your icon path */
+  background-image: url("../public/rightArrow.svg"); 
 }
 
 .swiper-button-prev::after {
-  background-image: url("../public/leftArrow.svg"); /* Replace with your icon path */
+  background-image: url("../public/leftArrow.svg"); 
 }
 
 .swiper-pagination-bullet {
@@ -289,4 +289,33 @@
 
 .swiper-pagination-bullet-active {
   background-color: #cbacf9;
+} */
+.swiper-button-next::after {
+  content: "";
+}
+.swiper-button-prev::after {
+  content: "";
+}
+
+.swiper-pagination-bullet {
+  background-color: #ffffff;
+}
+.swiper-pagination-bullet-active {
+  background-color: #b387f6;
+}
+.swiper-button-prev {
+  color: #fff;
+  border: 2px solid #b387f6;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  background-color: #b387f6;
+}
+.swiper-button-next {
+  color: #fff;
+  border: 2px solid #b387f6;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  background-color: #b387f6;
 }
