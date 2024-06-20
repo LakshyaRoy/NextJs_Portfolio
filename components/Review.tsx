@@ -26,10 +26,12 @@ const Review = () => {
         </h4>
 
         <div className="mt-10 max-w-4xl mx-auto h-full bg-gray-800 reviewCard p-6 rounded-lg relative ">
-          <div className="text-[12rem] leading-[0rem] absolute top-[4rem] left-[-3rem] -z-10 text-purple opacity-40 select-none">
-            <span>{"“"}</span>
-          </div>
           <p className="text-white">
+            <span className="font-serif font-bold text-[40px] leading-[0rem]  text-purple opacity-40 select-none float-start absolute top-[2rem] left-[5px] ">
+              {"“"}
+
+              {/* absolute top-[3.5rem]  left-[-1.8rem] -z-10 */}
+            </span>
             Lakshya Roy has been at LifeBonder since December 4, 2023, until May
             31, 2024. Lakshya has been very reliable all through his internship,
             and more skilled than you would expect from an intern. He has done a
@@ -38,7 +40,10 @@ const Review = () => {
             and finds a solution. Having Lakshya Roy with us has been a positive
             experience. He communicates clearly and is always responsive,
             something that is very important. Lakshya Roy has my warmest and
-            sincerest recommendations.
+            sincerest recommendations.{" "}
+            <span className="text-purple font-serif text-[40px] absolute bottom-[75px] opacity-40">
+              {"”"}
+            </span>
           </p>
           <div className="flex  justify-between items-end">
             <div className="flex items-center mt-6 gap-5">

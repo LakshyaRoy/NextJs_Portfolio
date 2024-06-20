@@ -13,15 +13,15 @@ const Hero = () => {
     <div className=" pt-20 relative">
       <div>
         <Spotlight
-          className="-top-40 -left-10 md:-left-32 md:-top-20 h-screen"
+          className="top-[5rem] left-[4rem] sm:-top-40 sm:-left-10 md:-left-32 md:-top-20 h-screen"
           fill="white"
         />
         <Spotlight
-          className="top-28 left-80 md:left-auto md:right-80 h-[80vh] w-[50vw]"
+          className="top-[6rem] sm:top-28 sm:left-80 md:left-auto md:right-80 h-[80vh] w-[125vw] sm:w-[50vw]"
           fill="blue"
         />
         <Spotlight
-          className="top-0 left-20 md:left-auto md:right-20 h-[80vh] w-[50vw]"
+          className="top-[10rem] sm:top-0 sm:left-20 md:left-auto md:right-20 h-[80vh] w-[200vh]  sm:w-[50vw]"
           fill="white"
         />
       </div>
@@ -30,10 +30,7 @@ const Hero = () => {
       </div>
       <div className="flex justify-center relative my-20 z-10 items-center gap-10">
         {/* left */}
-        <div className="w-1/2 md:max-w-2xl flex flex-col lg:max-w-[60vw] items-left justify-center">
-          {/* <h2 className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-80">
-            Dynamic Web Magic With next.js
-          </h2> */}
+        <div className=" w-full sm:w-1/2 md:max-w-2xl flex flex-col lg:max-w-[60vw] items-left justify-center">
           <TextGenerateEffect
             className="text-left capitalize text-[40px] md:text-5xl lg:text-6xl text-blue-100"
             words="with figma wireframes in hand i bring website to life!"
@@ -50,7 +47,7 @@ const Hero = () => {
           </Link>
         </div>
         {/* right */}
-        <div className="w-1/2 md:max-w-2xl lg:max-w-[60vw] flex justify-center items-center">
+        <div className="w-1/2 md:max-w-2xl lg:max-w-[60vw] sm:flex justify-center items-center hidden">
           <div className="heroImage relative bg-cover rounded-[130px]  ">
             <div className="beforeImg " />
             <div className="afterImg" />
