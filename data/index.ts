@@ -377,35 +377,52 @@ export const companies = [
     nameImg: "/dockerName.svg",
   },
 ];
-
-export const workExperience = [
+export const experiences = [
   {
-    id: 1,
-    title: "Frontend Engineer Intern",
-    desc: "Assisted in the development of a web-based platform using React.js, enhancing interactivity.",
-    className: "md:col-span-2",
-    thumbnail: "/exp1.svg",
+    title: "Web Developer",
+    company_name: "LifeBonder",
+    icon: "LifeBonder",
+    iconBg: "#383E56",
+    date: "Dec 2023 to Current",
+    points: [
+      "Managed Lifebonder's site for optimal function and user experience. Oversaw updates, design, and performance, utilizing FileZilla FTP for precise version updates and efficient feature integration.",
+      "Guided website version control, ensured accurate updates, and secure deployments via FileZilla FTP. Collaborated for streamlined procedures, maintaining current tech and content.",
+    ],
   },
   {
-    id: 2,
-    title: "Mobile App Dev - JSM Tech",
-    desc: "Designed and developed mobile app for both iOS & Android platforms using React Native.",
-    className: "md:col-span-2", // change to md:col-span-2
-    thumbnail: "/exp2.svg",
+    title: "Frontend Developer",
+    company_name: "Quencil Pvt Ltd",
+    icon: "Quencil",
+    iconBg: "#383E56",
+    date: "Jan 2023 to March 2023",
+    points: [
+      "Developed a fully responsive company website using React and Tailwind CSS.",
+      "Learned and applied Git for version control and collaborative development with the team.",
+      "Adapted quickly to new technologies and tools, including learning new programming languages and frameworks as needed.",
+      "Contributed to code reviews and provided constructive feedback to team members to improve code quality and maintainability.",
+      "Maintained clear communication with team members to ensure project requirements were met and goals were achieved.",
+    ],
   },
   {
-    id: 3,
-    title: "Freelance App Dev Project",
-    desc: "Led the dev of a mobile app for a client, from initial concept to deployment on app stores.",
-    className: "md:col-span-2", // change to md:col-span-2
-    thumbnail: "/exp3.svg",
+    title: "Frontend Developer",
+    company_name: "The Sparks Foundation,",
+    icon: "Spark",
+    iconBg: "#E6DEDD",
+    date: "Jan 2023 to feb 2023 ",
+    points: [
+      "Utilized web development abilities to create a custom payment integration website for an NGO, which included a Razorpay button in trial mode, allowing the organization to collect online payments",
+    ],
   },
   {
-    id: 4,
-    title: "Lead Frontend Developer",
-    desc: "Developed and maintained user-facing features using modern frontend technologies.",
-    className: "md:col-span-2",
-    thumbnail: "/exp4.svg",
+    title: "Frontend Developer",
+    company_name: "Business Web Solutions",
+    icon: "BWS",
+    iconBg: "#383E56",
+    date: "Dec 2022 to Feb 2023.",
+    points: [
+      "Completed a comprehensive web development training program in Python, jQuery, Bootstrap, JavaScript, CSS, and HTML5 under the  guidance of an experienced mentor.",
+      "Acquired foundational web development skills through hands-on training and practical application of web development frameworks and programming languages",
+    ],
   },
 ];
 
