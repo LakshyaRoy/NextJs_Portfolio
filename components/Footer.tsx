@@ -33,9 +33,9 @@ const Footer = () => {
   };
 
   return (
-    <footer className=" text-white p-4 w-full flex justify-between pt-10 pb-5">
+    <footer className=" text-white p-4 w-full flex justify-between pt-10 pb-5 flex-col sm:flex-row ">
       <div className="text-center mb-4">Copyright &copy; 2024 Lakshya Roy</div>
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-center gap-6">
         {Object.values(links).map((link, index) => (
           <Link
             key={index}
