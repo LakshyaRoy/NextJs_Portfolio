@@ -6,12 +6,22 @@ import LakshyaRoy from "@/assets/LakshyaRoy.png";
 import { TextGenerateEffect } from "./ui/text-generate-effect";
 import { BackgroundGradient } from "./ui/background-gradient";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { FaCircleChevronRight, FaCircleChevronLeft } from "react-icons/fa6";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import Cards from "./Cards";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  EffectCoverflow,
+} from "swiper/modules";
 import "@/app/globals.css";
+import { commonStylesForComponents } from "@/data";
+import { makeTextPurple } from "@/utils/makeTextPurple";
 
 const AboutHero = () => {
   const aboutme = {
@@ -20,10 +30,6 @@ const AboutHero = () => {
             year of experience working in the tech industry, and I'm skilled in
             React.js, TailwindCSS, and even learning TypeScript & NextJs. I'm always looking for new
             challenges and opportunities to learn and grow as a developer.`,
-  };
-
-  const makeTextPurple = (text: string) => {
-    return <span className="text-purple font-bold">{text}</span>;
   };
 
   const certificates = [
@@ -78,8 +84,8 @@ const AboutHero = () => {
   ];
 
   return (
-    <section className="mt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="min-h-screen flex flex-col md:flex-row items-center justify-around gap-10">
+    <section className="mt-36 md:mt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen h-full flex flex-col md:flex-row items-center justify-around gap-10">
         <div className="w-fit">
           <BackgroundGradient className="rounded-[22px] max-w-sm bg-white dark:bg-zinc-900">
             <figure className="relative">
@@ -95,7 +101,7 @@ const AboutHero = () => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl text-blue-100">
             <TextGenerateEffect words="About Me" />
           </h1>
-          <p className="mt-4 text-secondary text-lg md:text-xl">
+          <p className="mt-4 text-secondary text-lg md:text-xl text-left">
             {aboutme.description}
           </p>
         </div>
@@ -118,13 +124,28 @@ const AboutHero = () => {
         </p>
       </div>
       <div>
-        <h4 className="text-white text-center font-black text-[30px] xs:text-[40px] sm:text-[50px] md:text-[50px] capitalize py-10">
+        <h4 className="text-white text-center font-black text-[30px] xs:text-[40px] sm:text-[50px] md:text-[50px] capitalize py-5 md:py-10">
           Certificates
         </h4>
         <Swiper
-          modules={[Navigation, Pagination, Scrollbar, A11y]}
-          navigation
-          pagination={{ clickable: true }}
+          modules={[Navigation, Pagination, Scrollbar, A11y, EffectCoverflow]}
+          navigation={{
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          }}
+          pagination={{ clickable: true, el: ".swiper-pagination" }}
+          effect="coverflow"
+          grabCursor={true}
+          centeredSlides={true}
+          loop={true}
+          // slidesPerView={"auto"}
+          coverflowEffect={{
+            rotate: 0,
+            stretch: 0,
+            depth: 250,
+            modifier: 1.5,
+            slideShadows: true,
+          }}
           breakpoints={{
             640: { slidesPerView: 1, spaceBetween: 20 },
             768: { slidesPerView: 2, spaceBetween: 40 },
@@ -142,6 +163,15 @@ const AboutHero = () => {
               />
             </SwiperSlide>
           ))}
+          <div className="slider-controller">
+            <div className="swiper-button-prev slider-arrow">
+              <FaCircleChevronLeft name="arrow-back-outline" />
+            </div>
+            <div className="swiper-button-next slider-arrow">
+              <FaCircleChevronRight name="arrow-forward-outline" />
+            </div>
+            <div className="swiper-pagination"></div>
+          </div>
         </Swiper>
       </div>
     </section>
