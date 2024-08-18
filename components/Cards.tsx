@@ -31,7 +31,7 @@ const Cards = ({
   return (
     <Tilt
       options={{ max: 45, scale: 1, speed: 450 }}
-      className="bg-tertiary p-5 rounded-xl sm:w-[360px] w-full relative border-2 border-gray-500 cursor-pointer SpecificCard"
+      className="bg-tertiary p-5 rounded-xl sm:w-[360px] w-full relative border-2 border-gray-500 cursor-pointer SpecificCard mx-auto"
     >
       {website_link ? (
         <Link href={website_link} target="_blank">

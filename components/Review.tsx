@@ -87,13 +87,20 @@ const Review = () => {
 
         <div className="mt-10 flex justify-center items-center ">
           <GitHubCalendar
-            username="lakshyaroy"
+            username="LakshyaRoy"
             blockSize={15}
             blockMargin={5}
             fontSize={16}
-            theme={theme}
-            responsive={true}
-            color="#38265f"
+            theme={{
+              light: ["#f0f0f0", "#384259"],
+              dark: [
+                "#1f1f1f", //", // Deepest shade
+                "#38265f", // Deeper shade
+                "#291e4a", // Even darker shade
+                "#1d1635", // Darker shade
+                "#151030", // Your reference color
+              ],
+            }}
           />
         </div>
       </div>
