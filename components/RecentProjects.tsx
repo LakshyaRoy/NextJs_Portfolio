@@ -1,6 +1,5 @@
 import { Projects } from "@/data";
 import React from "react";
-import { PinContainer } from "./ui/3d-pin";
 import Image from "next/image";
 import Logo from "@/public/b4.svg";
 import { FaLocationArrow } from "react-icons/fa";

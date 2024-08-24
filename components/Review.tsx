@@ -1,10 +1,11 @@
 "use client";
-
 import Link from "next/link";
 import React from "react";
 import GitHubCalendar from "react-github-calendar";
+import Jesper from "@/assets/Jesper.jpg";
 
 import { FaLocationArrow, FaLinkedin } from "react-icons/fa";
+import Image from "next/image";
 
 const Review = () => {
   const theme = {
@@ -48,8 +49,8 @@ const Review = () => {
           <div className="flex  justify-between items-end">
             <div className="flex items-center mt-6 gap-5">
               <figure className="w-10 h-10 overflow-hidden rounded-full bg-white">
-                <img
-                  src="https://media.licdn.com/dms/image/C4E03AQFoTBqRz5iXgQ/profile-displayphoto-shrink_800_800/0/1650965484241?e=1724284800&v=beta&t=_adHLh_06sdq1zR-jIwrFz6wv77InucuxLMZxkfTFAU"
+                <Image
+                  src={Jesper}
                   alt="Jesper Simonsen Profile Picture"
                   className="w-full h-full object-cover"
                 />

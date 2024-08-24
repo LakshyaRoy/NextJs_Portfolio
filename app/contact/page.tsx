@@ -18,7 +18,7 @@ const Contact = () => {
           <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 min-h-screen h-full">
             <section className="flex flex-col-reverse  md:flex-row items-center justify-between gap-8 mb-16 w-full">
               <div className="w-full md:w-1/2 text-left">
-                <div className="bg-primary bg-opacity-30 backdrop-filter backdrop-blur-lg p-6 rounded-lg max-w-lg shadow-lg border border-white border-opacity-20">
+                <div className="bg-primary bg-opacity-30 backdrop-filter backdrop-blur-lg p-6 rounded-lg max-w-lg shadow-lg border border-white border-opacity-20 mx-auto">
                   <p className="text-lg text-secondary  mb-2">Get in Touch</p>
                   <h2 className="text-3xl font-bold text-blue-100 mb-6">
                     Contact Me!

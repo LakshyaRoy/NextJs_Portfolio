@@ -7,46 +7,49 @@ import {
   FaInstagram,
   FaTwitter,
 } from "react-icons/fa";
+import { AnimatedTooltip } from "./ui/animated-tooltip";
 
 const Footer = () => {
   const links = {
     linkedin: {
-      icon: <FaLinkedin />,
+      id: 1,
+      name: "LinkedIn",
+      image: <FaLinkedin size={30} />,
       link: "https://www.linkedin.com/in/lakshya-roy729/",
     },
     github: {
-      icon: <FaGithub />,
+      id: 2,
+      name: "Github",
+      image: <FaGithub size={30} />,
       link: "https://github.com/LakshyaRoy",
     },
     whatsapp: {
-      icon: <FaWhatsapp />,
+      id: 3,
+      name: "Whatsapp",
+      image: <FaWhatsapp size={30} />,
       link: "https://wa.me/+918294402319",
     },
     instagram: {
-      icon: <FaInstagram />,
+      id: 4,
+      name: "Instagram",
+      image: <FaInstagram size={30} />,
       link: "https://www.instagram.com/just_lakshyaroy?igsh=M3MwNXppOTlma2Zp&utm_source=qr",
     },
     twitter: {
-      icon: <FaTwitter />,
+      id: 5,
+      name: "Twitter",
+      image: <FaTwitter size={30} />,
       link: "https://x.com/lakshya729",
     },
   };
 
   return (
-    <footer className=" text-white p-4 w-full flex justify-between pt-10 pb-5 flex-col sm:flex-row ">
-      <div className="text-center mb-4">Copyright &copy; 2024 Lakshya Roy</div>
-      <div className="flex justify-center gap-6">
-        {Object.values(links).map((link, index) => (
-          <Link
-            key={index}
-            href={link.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-2xl"
-          >
-            {link.icon}
-          </Link>
-        ))}
+    <footer className="p-4 w-full">
+      <div className="w-full flex justify-between items-center pt-10 text-white flex-col sm:flex-row container">
+        <div className="text-center">Copyright &copy; 2024 Lakshya Roy</div>
+        <div className="flex items-center justify-end">
+          <AnimatedTooltip items={Object.values(links)} />
+        </div>
       </div>
     </footer>
   );

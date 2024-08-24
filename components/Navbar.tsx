@@ -10,7 +10,6 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const pathname = usePathname();
-  console.log(pathname);
 
   const navLinks = [
     { id: "about", title: "About" },
@@ -22,14 +21,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const currentLink = navLinks.find((link) => pathname === `/${link.id}`);
-    if (currentLink) {
-      setActive(currentLink.title);
-    } else {
-      setActive("");
-    }
+    setActive(currentLink ? currentLink.title : "");
   }, [pathname]);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   return (
     <nav className="w-full h-fit py-5 fixed top-0 z-50 bg-primary">
@@ -41,6 +36,7 @@ const Navbar = () => {
             alt="logo"
             width={100}
             height={100}
+            priority={true} // Ensures the image is optimized for SSR
           />
           <p className="text-white text-lg font-bold">Front-End Developer</p>
         </Link>
@@ -51,9 +47,9 @@ const Navbar = () => {
             <li key={link.id}>
               <Link
                 href={`/${link.id}`}
-                className={`text-[18px] font-medium hover:text-white transition-colors ${
+                className={`text-[18px] font-medium transition-colors ${
                   active === link.title ? "text-white" : "text-secondary"
-                }`}
+                } hover:text-white`}
               >
                 {link.title}
               </Link>
@@ -78,12 +74,10 @@ const Navbar = () => {
             <li key={link.id}>
               <Link
                 href={`/${link.id}`}
-                className={`block py-2 text-[18px] font-medium hover:text-white transition-colors ${
+                className={`block py-2 text-[18px] font-medium transition-colors ${
                   active === link.title ? "text-white" : "text-secondary"
-                }`}
-                onClick={() => {
-                  setIsMenuOpen(false);
-                }}
+                } hover:text-white`}
+                onClick={() => setIsMenuOpen(false)}
               >
                 {link.title}
               </Link>
