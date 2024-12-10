@@ -21,17 +21,15 @@ const Review = () => {
   return (
     <section className="py-8">
       <div>
-        <h4 className="text-white text-center font-black text-[30px] xs:text-[40px] sm:text-[50px] md:text-[50px] capitalize">
+        <h4 className="text-white font-black  sm:text-[50px] text-[30px] text-center">
           Kind words from{" "}
           <span className="text-purple">satisfied colleagues!</span>
         </h4>
 
-        <div className="mt-10 max-w-4xl mx-auto h-full bg-gray-800 reviewCard p-6 rounded-lg relative ">
+        <div className="mt-10 max-w-5xl mx-auto h-full bg-gray-800 reviewCard  rounded-lg relative p-10 ">
           <p className="text-white">
-            <span className="font-serif font-bold text-[40px] leading-[0rem]  text-purple opacity-40 select-none float-start absolute top-[2rem] left-[5px] ">
+            <span className="font-serif font-bold text-[50px] leading-[0rem]  text-purple opacity-40 select-none float-start absolute top-[3.5rem] left-2 ">
               {"“"}
-
-              {/* absolute top-[3.5rem]  left-[-1.8rem] -z-10 */}
             </span>
             Lakshya Roy has been at LifeBonder since December 4, 2023, until May
             31, 2024. Lakshya has been very reliable all through his internship,
@@ -41,10 +39,7 @@ const Review = () => {
             and finds a solution. Having Lakshya Roy with us has been a positive
             experience. He communicates clearly and is always responsive,
             something that is very important. Lakshya Roy has my warmest and
-            sincerest recommendations.{" "}
-            <span className="text-purple font-serif text-[40px] absolute bottom-[75px] opacity-40">
-              {"”"}
-            </span>
+            sincerest recommendations.
           </p>
           <div className="flex  justify-between items-end">
             <div className="flex items-center mt-6 gap-5">

@@ -24,8 +24,11 @@ const RecentProjects = () => {
         <Link href={"/project"}>
           <TailwindcssButtons
             title="More Projects"
-            icon={<FaLocationArrow />}
+            icon={
+              <FaLocationArrow className="text-white hover:text-purple transition-all duration-200" />
+            }
             position="right"
+            otherClasses="text-white"
           />
         </Link>
       </div>

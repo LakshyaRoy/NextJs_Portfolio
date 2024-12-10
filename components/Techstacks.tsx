@@ -4,6 +4,7 @@ import React from "react";
 import { BackgroundGradient } from "./ui/background-gradient";
 import ReactImage from "../assets/react.png";
 import Image from "next/image";
+import { TextGenerateEffect } from "./ui/text-generate-effect";
 
 const Techstacks = () => {
   const techStackInfos = [
@@ -40,12 +41,18 @@ const Techstacks = () => {
   ];
 
   return (
-    <div className="container mx-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="w-full h-full my-12" id="techstack">
+      <section className="text-center mb-16">
+        <TextGenerateEffect
+          className="text-white font-black  sm:text-[50px] text-[30px] capitalize"
+          words="Tech Stacks, I use in my projects"
+        />
+      </section>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {techStackInfos.map((tech, index) => (
-          <BackgroundGradient
+          <div
             key={index}
-            className="rounded-3xl p-6 bg-white dark:bg-zinc-900"
+            className=" border border-white   mt-10 w-full bg-gray-800 reviewCard  rounded-lg relative p-5 hover:bg-black-300 cursor-pointer transition-all duration-300"
           >
             <div className="flex flex-col items-center">
               <Image
@@ -62,7 +69,7 @@ const Techstacks = () => {
                 {tech.description}
               </span>
             </div>
-          </BackgroundGradient>
+          </div>
         ))}
       </div>
     </div>

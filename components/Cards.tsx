@@ -30,7 +30,7 @@ const Cards = ({
 }) => {
   return (
     <Tilt
-      options={{ max: 25, scale: 1, speed: 450 }}
+      options={{ max: 25, scale: 0.92, speed: 450 }}
       className="bg-tertiary p-3 sm:p-5 rounded-xl w-full max-w-[380px] relative border-2 border-gray-500 cursor-pointer SpecificCard mx-auto"
     >
       {website_link ? (

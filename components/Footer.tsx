@@ -44,8 +44,8 @@ const Footer = () => {
   };
 
   return (
-    <footer className="p-4 w-full">
-      <div className="w-full flex justify-between items-center pt-10 text-white flex-col sm:flex-row container">
+    <footer className="p-4 w-full h-20 bg-primary">
+      <div className="w-full flex justify-between items-center text-white flex-col sm:flex-row container">
         <div className="text-center">Copyright &copy; 2024 Lakshya Roy</div>
         <div className="flex items-center justify-end">
           <AnimatedTooltip items={Object.values(links)} />

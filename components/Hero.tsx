@@ -10,7 +10,7 @@ import LakshyaRoy from "@/assets/LakshyaRoy.png";
 
 const Hero = () => {
   return (
-    <div className=" pt-20 relative">
+    <div className=" pt-20 relative" id="home">
       <div>
         <Spotlight
           className="top-[5rem] left-[4rem] sm:-top-40 sm:-left-10 md:-left-32 md:-top-20 h-screen"
@@ -32,19 +32,28 @@ const Hero = () => {
         {/* left */}
         <div className=" w-full sm:w-1/2 md:max-w-2xl flex flex-col lg:max-w-[60vw] items-left justify-center">
           <TextGenerateEffect
-            className="text-left capitalize text-[40px] md:text-5xl lg:text-6xl text-blue-100"
+            className="text-left capitalize text-[40px] md:text-5xl  text-blue-100"
             words="with figma wireframes in hand i bring website to life!"
           />
           <p className="text-left capitalize md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
             hi, I&apos;m Lakshya Roy, a Frontend Developer from India.
           </p>
-          <Link href="/about" className="w-fit">
-            <TailwindcssButtons
-              title="Know About me!"
-              icon={<FaLocationArrow />}
-              position="right"
-            />
-          </Link>
+          <div className=" flex flex-col sm:flex-row  justify-start items-start sm:items-center gap-4">
+            <Link href="/about" className="w-fit">
+              <TailwindcssButtons
+                title="Know About me!"
+                icon={<FaLocationArrow />}
+                position="right"
+              />
+            </Link>
+            <Link href="/contact" className="w-fit">
+              <TailwindcssButtons
+                title="Let's Talk!"
+                icon={<FaLocationArrow />}
+                position="right"
+              />
+            </Link>
+          </div>
         </div>
         {/* right */}
         <div className="w-1/2 md:max-w-2xl lg:max-w-[60vw] sm:flex justify-center items-center hidden">
@@ -53,17 +62,25 @@ const Hero = () => {
             <div className="afterImg" />
             <div className="flex justify-center items-center w-[220px]  h-[70px] text-[#141414]  absolute BouncingCard ">
               <FaLinkedin size={30} className="w-2/6" />
-              <div className=" flex flex-col w-2/3">
+              <Link
+                href="https://www.linkedin.com/in/lakshya-roy729/"
+                target="_blank"
+                className=" flex flex-col w-2/3"
+              >
                 <span className="font-bold text-xl">LinkedIn</span>
                 <span className="text-sm">@lakshya-roy729</span>
-              </div>
+              </Link>
             </div>
             <div className="flex justify-center items-center w-[220px]  h-[70px] text-[#141414]  absolute  movingCard  ">
               <FaGithub size={30} className="w-2/6" />
-              <div className=" flex flex-col w-2/3">
+              <Link
+                href="https://github.com/LakshyaRoy"
+                target="_blank"
+                className=" flex flex-col w-2/3"
+              >
                 <span className="font-bold text-xl">GitHub</span>
                 <span className="text-sm">@LakshyaRoy </span>
-              </div>
+              </Link>
             </div>
             <Image
               src={LakshyaRoy}

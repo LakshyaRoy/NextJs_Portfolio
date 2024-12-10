@@ -4,18 +4,27 @@ import RecentProjects from "@/components/RecentProjects";
 import Overview from "@/components/Overview";
 import Review from "@/components/Review";
 import Footer from "@/components/Footer";
+import ProjectCard from "@/components/ProjectCard";
+import ContactUs from "@/components/ContactUs";
+import WorkEx from "@/components/WorkEx";
+import Techstacks from "@/components/Techstacks";
 
 export default function Home() {
   return (
-    <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden mx-auto sm:px-10 px-5">
+    <div className="w-full h-full">
       <Navbar />
-      <div className="max-w-7xl w-full">
-        <Hero />
-        <Overview />
-        <RecentProjects />
-        <Review />
-      </div>
+      <main className="relative bg-black-100  overflow-hidden">
+        <div className=" w-full container mx-auto">
+          <Hero />
+          <Overview />
+          <ProjectCard />
+          <WorkEx />
+          <Techstacks />
+          <Review />
+          <ContactUs />
+        </div>
+      </main>
       <Footer />
-    </main>
+    </div>
   );
 }

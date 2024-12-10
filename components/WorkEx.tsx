@@ -14,8 +14,11 @@ import "react-vertical-timeline-component/style.min.css";
 
 const WorkEx = () => {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24">
-      <h1 className="capitalize text-[40px] md:text-5xl lg:text-6xl text-blue-100 text-center ">
+    <section
+      className="w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24"
+      id="experience"
+    >
+      <h1 className="text-white font-black  sm:text-[50px] text-[30px] text-center">
         My {makeTextPurple("Work Experience")}
       </h1>
       <div className="mt-20 flex flex-col">
@@ -25,7 +28,7 @@ const WorkEx = () => {
               <AnimatedTimelineElement key={i} i={i}>
                 <VerticalTimelineElement
                   className={
-                    i % 2 === 0 ? "" : "vertical-timeline-element--right"
+                    i % 2 === 0 ? "" : "vertical-timeline-element--right w-full"
                   }
                   contentStyle={{
                     background: "#1d1836",

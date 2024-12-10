@@ -98,7 +98,7 @@ const AboutHero = () => {
           </BackgroundGradient>
         </div>
         <div className="mt-4 text-center md:w-1/2 md:text-left">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl text-blue-100">
+          <h1 className="text-4xl md:text-5xl  text-blue-100">
             <TextGenerateEffect words="About Me" />
           </h1>
           <p className="mt-4 text-secondary text-lg md:text-xl text-left">
@@ -111,16 +111,18 @@ const AboutHero = () => {
           Academic Milestones
         </h2>
         <p className="mt-4 text-secondary text-lg md:text-xl">
-          I hold a Bachelor of Computer Application (BCA) degree from{" "}
-          {makeTextPurple("Birla Institute of Technology, Mesra, Patna,")}
-          graduating in 2024. Recently, I completed a six-month internship at
-          {makeTextPurple(" LifeBonder")}, where I gained valuable experience in
-          frontend development. During my academic journey, I also secured 2nd
-          place in
-          {makeTextPurple(" Citro Hack 2023")} among 56 projects from 49
-          countries, served as {makeTextPurple(" Design Head and Webmaster")}
-          for various clubs at BIT Patna, and hosted a two-day Bootcamp on
-          frontend development for the {makeTextPurple(" Technical Club")}.
+          I hold a Bachelor of Computer Applications (BCA) degree from{" "}
+          {makeTextPurple("Birla Institute of Technology, Mesra, Patna,")}{" "}
+          graduating in 2024. Currently, I work as a full-time frontend
+          developer at {makeTextPurple("Unified Mentor")}, where I have gained
+          significant experience in frontend development. During my academic
+          journey, I achieved {makeTextPurple("2nd place")} in Citro Hack 2023,
+          competing against 56 projects from 49 countries. I also served as the{" "}
+          {makeTextPurple("Design Head")} for various clubs at BIT Patna,
+          including the {makeTextPurple("Technical Club and Esports Club")}.
+          Additionally, I took on the role of {makeTextPurple("Webmaster")} for
+          my college event Technika and conducted a two-day frontend development
+          Bootcamp for the {makeTextPurple("Technical Club")}.
         </p>
       </div>
       <div>
