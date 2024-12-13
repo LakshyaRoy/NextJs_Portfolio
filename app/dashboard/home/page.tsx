@@ -9,11 +9,11 @@ import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import { GrCertificate, GrProjects } from "react-icons/gr";
 import { IoMdPeople } from "react-icons/io";
 import { FiBriefcase } from "react-icons/fi";
-
+import DogGif from "@/assets/Dog.gif";
+import Image from "next/image";
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authentication, (user) => {
       console.log(user);
@@ -29,7 +29,20 @@ const Page = () => {
   }, [router]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#101010] to-[#202020] text-white gap-4">
+        <Image
+          src={DogGif}
+          alt="Loading Dog Animation"
+          width={200}
+          height={200}
+          className="animate-bounce"
+        />
+        <p className="text-lg sm:text-xl font-semibold tracking-wide animate-pulse">
+          Loading, please wait...
+        </p>
+      </div>
+    );
   }
 
   const dashboardArray = [
@@ -57,11 +70,11 @@ const Page = () => {
 
   return (
     <DashboardLayout>
-      <div className="w-full bg-[#212121] min-h-[40vh] rounded-lg p-5">
-        <p className="text-lg sm:text-2xl font-semibold bg-gradient-to-r from-[#BEC1CF] via-[#D5D8EA] to-[#D5D8EA] bg-clip-text text-transparent relative z-10 w-full sm:w-1/3 text-center sm:text-left">
+      <div className="w-full bg-[#212121] min-h-[35vh] max-w-7xl mx-auto rounded-lg p-5">
+        <p className="text-lg sm:text-2xl font-semibold bg-gradient-to-r from-[#BEC1CF] via-[#D5D8EA] to-[#D5D8EA] bg-clip-text text-transparent relative z-10 w-full text-center sm:w-auto sm:text-left">
           Hello Lakshya,
         </p>
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {dashboardArray.map((item, index) => (
             <DashBoardCard
               key={index}
@@ -88,13 +101,13 @@ const DashBoardCard: React.FC<DashBoardCardProps> = ({
   icon: Icon,
 }) => {
   return (
-    <div className="flex items-center gap-5  w-fit p-2 mx-auto">
-      <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center text-3xl">
+    <div className="flex items-center gap-4 w-full max-w-sm p-4 mx-auto bg-[#323232] rounded-lg">
+      <div className="h-14 w-14 bg-green-100 rounded-full flex items-center justify-center text-3xl">
         <Icon className="text-green-500" />
       </div>
-      <div className="flex flex-col ">
-        <div className="text-3xl font-bold text-white/90">{value}</div>
-        <div className="text-lg text-white-200">{name}</div>
+      <div className="flex flex-col">
+        <div className="text-2xl font-bold text-white/90">{value}</div>
+        <div className="text-base text-white/70">{name}</div>
       </div>
     </div>
   );

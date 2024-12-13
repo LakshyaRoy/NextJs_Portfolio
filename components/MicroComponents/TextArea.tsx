@@ -5,6 +5,7 @@ interface TextAreaFieldProps {
   error?: string;
   handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   formValue: string;
+  placeholder: string;
   rows: number;
   cols: number;
 }
@@ -14,6 +15,7 @@ const TextArea: React.FC<TextAreaFieldProps> = ({
   error,
   handleChange,
   formValue,
+  placeholder,
   rows,
   cols,
 }) => {
@@ -28,7 +30,7 @@ const TextArea: React.FC<TextAreaFieldProps> = ({
         rows={rows}
         cols={cols}
         className="w-full bg-black-300 px-5 py-2 rounded-lg placeholder:text-white-500 text-lg text-white-800 shadow-black-200 shadow-2xl focus:outline-none"
-        placeholder={`Enter Your ${name}`}
+        placeholder={placeholder}
         required
         onChange={handleChange}
         value={formValue}

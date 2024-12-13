@@ -5,11 +5,20 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import { MdLogout } from "react-icons/md";
+import { User } from "firebase/auth";
 
-const SideNav = ({ isMenuOpen, setIsMenuOpen }) => {
+interface SideNavProps {
+  isMenuOpen: boolean;
+  setIsMenuOpen: (open: boolean) => void;
+  user: User | null;
+}
+
+const SideNav: React.FC<SideNavProps> = ({
+  isMenuOpen,
+  setIsMenuOpen,
+  user,
+}) => {
   const pathname = usePathname();
-
-  // console.log("Current pathname:", pathname);
 
   const linkArray = [
     {
@@ -38,51 +47,78 @@ const SideNav = ({ isMenuOpen, setIsMenuOpen }) => {
       href: "/dashboard/experiences",
     },
   ];
+
   const handleLogout = async () => {
     try {
-      const auth = await signOut(authentication);
-      console.log("Signed out successfully", auth);
+      await signOut(authentication);
     } catch (error) {
-      console.log(error);
+      console.error("Logout error:", error);
     }
   };
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-72  z-40  px-6 py-10 overflow-x-hidden border-r border-white/10">
-      <div
-        className="absolute top-6 right-6 text-white/50 hover:text-white cursor-pointer"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
+    <div className="h-full w-full px-6 py-10 overflow-y-auto">
+      {/* Mobile Close Button */}
+      <button
+        className="md:hidden absolute top-6 right-6 text-white/50 hover:text-white"
+        onClick={() => setIsMenuOpen(false)}
+        aria-label="Close Menu"
       >
         <HiOutlineMenuAlt2 size={35} />
-      </div>
-      <div className="flex flex-col justify-between h-full pt-1">
-        <div className="flex flex-col justify-center items-start gap-2">
+      </button>
+
+      <div className="flex flex-col justify-between h-full pt-8 md:pt-1">
+        {/* User Profile Section */}
+        <div className="flex flex-col justify-center items-start gap-3 mb-8">
           <figure>
-            <div className="bg-[#212121] w-16 h-16 rounded-md"></div>
+            <div className="bg-[#212121] w-16 h-16 rounded-md flex items-center justify-center text-white">
+              {user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt="Profile"
+                  className="w-full h-full object-cover rounded-md"
+                />
+              ) : (
+                user?.displayName?.[0] || "👤"
+              )}
+            </div>
           </figure>
-          <h1 className=" text-2xl">Lakshya</h1>
-          <h3 className=" text-sm text-white/50">LakshyaRoy848@gmail.com</h3>
+          <h1 className="text-2xl text-white">{user?.displayName || "User"}</h1>
+          <h3 className="text-sm text-white/50">{user?.email || "No email"}</h3>
         </div>
-        <div className="flex flex-col justify-center items-start h-full">
-          <ul className="text-white ">
+
+        {/* Navigation Links */}
+        <nav className="flex-grow">
+          <ul className="space-y-2">
             {linkArray.map((link) => (
               <li key={link.id}>
                 <Link
                   href={link.href}
-                  className={`block py-2 text-2xl ${
-                    pathname === link.href
-                      ? "text-white font-bold"
-                      : "text-white/50"
-                  } hover:text-white`}
+                  className={`
+                    block py-2 text-lg transition-colors duration-200
+                    ${
+                      pathname === link.href
+                        ? "text-white font-bold"
+                        : "text-white/50 hover:text-white"
+                    }
+                  `}
                 >
                   {link.title}
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
-        <div className="text-white/50 hover:text-white cursor-pointer w-fit">
-          <MdLogout size={35} onClick={handleLogout} title="Logout" />
+        </nav>
+
+        {/* Logout Button */}
+        <div
+          className="mt-8 text-white/50 hover:text-white cursor-pointer w-fit"
+          onClick={handleLogout}
+        >
+          <button className="flex items-center space-x-2" aria-label="Logout">
+            <MdLogout size={25} />
+            <span className="text-sm">Logout</span>
+          </button>
         </div>
       </div>
     </div>
