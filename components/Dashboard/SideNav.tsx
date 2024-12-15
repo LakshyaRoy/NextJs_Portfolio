@@ -46,6 +46,11 @@ const SideNav: React.FC<SideNavProps> = ({
       title: "Experiences",
       href: "/dashboard/experiences",
     },
+    {
+      id: 6,
+      title: "Tech Stack",
+      href: "/dashboard/techstack",
+    },
   ];
 
   const handleLogout = async () => {
@@ -88,8 +93,8 @@ const SideNav: React.FC<SideNavProps> = ({
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-grow">
-          <ul className="space-y-2">
+        <nav className="flex-grow h-full">
+          <ul className="h-full flex items-start justify-center gap-2 flex-col">
             {linkArray.map((link) => (
               <li key={link.id}>
                 <Link
