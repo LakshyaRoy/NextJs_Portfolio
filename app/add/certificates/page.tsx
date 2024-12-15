@@ -96,11 +96,12 @@ const AddCertificates: React.FC = () => {
         <div className="w-full max-w-7xl h-full ">
           <Link
             href="/dashboard/certificates"
-            className="flex w-fit items-center gap-2 text-sm sm:text-base hover:text-gray-300 transition-colors"
+            className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-6 group"
           >
-            <IoArrowBack className="text-xl" />
-            Back
+            <IoArrowBack className="text-xl group-hover:transform group-hover:-translate-x-1 transition-transform" />
+            Back to Certificates
           </Link>
+
           <section className="w-full min-h-[30vh] bg-neutral-800 rounded-lg shadow-lg px-4 sm:px-6 py-6 max-w-xl mx-auto my-5">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="flex flex-col items-center space-y-6">
