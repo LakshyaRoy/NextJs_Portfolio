@@ -66,7 +66,7 @@ const Certificates = () => {
 
   return (
     <DashboardLayout>
-      <div className="w-full max-w-7xl mx-auto ">
+      <div className="w-full max-w-7xl mx-auto">
         {/* Header Section */}
         <section className="mb-8 w-full h-full">
           <div className="w-full flex flex-wrap items-center justify-between gap-4">

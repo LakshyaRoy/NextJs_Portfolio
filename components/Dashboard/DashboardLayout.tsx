@@ -49,7 +49,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row w-full min-h-screen bg-[#101010] overflow-hidden">
+    <div className="flex flex-col md:flex-row w-full h-screen bg-[#101010] overflow-hidden">
       {/* Mobile Menu Toggle */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-[#101010]">
         <h1 className="text-white text-xl font-bold">Dashboard</h1>

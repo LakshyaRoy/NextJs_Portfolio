@@ -34,8 +34,7 @@ const Page = () => {
             </div>
           </div>
         </section>
-
-        <section className="bg-[#212121] rounded-lg ">
+        <section className="bg-[#212121] rounded-lg">
           {/* Header Section */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
             <h2 className="text-lg font-semibold text-white-200">Projects</h2>
