@@ -7,11 +7,13 @@ import Image from "next/image";
 import InputField from "@/components/MicroComponents/InputField";
 import TextArea from "@/components/MicroComponents/TextArea";
 import { IoIosSend } from "react-icons/io";
+import { addDoc, collection } from "firebase/firestore";
+import { firestore } from "@/firebase/Firebase";
 const Page = () => {
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
-
+  const dbCollections = collection(firestore, "experiences");
   interface FormData {
     title: string;
     company_name: string;
@@ -94,7 +96,10 @@ const Page = () => {
     return hasError;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  console.log("Firestore Instance:", firestore);
+  console.log("Collection Reference:", dbCollections);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!image) {
@@ -102,29 +107,62 @@ const Page = () => {
       return;
     }
 
-    if (handleError()) {
-      console.log(error);
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+    if (!uploadPreset) {
+      console.error("Cloudinary upload preset is missing");
       return;
     }
 
-    const convertInPoints = (desc: string) => {
-      let points = [];
-      if (!desc) return [];
-      const descArray = desc.split("\n");
-      points.push(descArray);
-      return points;
+    const cloudinaryFormData = new FormData();
+    cloudinaryFormData.append("file", image);
+    cloudinaryFormData.append("upload_preset", uploadPreset);
+
+    const uploadImage = async () => {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: "POST", body: cloudinaryFormData }
+      );
+      if (!response.ok) throw new Error("Failed to upload image");
+      const data = await response.json();
+      return data.secure_url;
     };
 
-    const data = {
-      title: formData.title,
-      company_name: formData.company_name,
-      icon: image,
-      iconBg: formData.iconBg,
-      date: formData.date,
-      points: convertInPoints(formData.points),
-    };
+    try {
+      const imageUrl = await uploadImage();
 
-    console.log(data);
+      const docData = {
+        title: formData.title,
+        company_name: formData.company_name,
+        icon: imageUrl,
+        iconBg: formData.iconBg || "#000000",
+        date: formData.date,
+        points: formData.points
+          .split("\n")
+          .filter((point) => point.trim() !== ""),
+        createdAt: new Date(),
+      };
+
+      console.log("Document Data:", JSON.stringify(docData, null, 2));
+
+      const addCertificate = await addDoc(dbCollections, docData);
+      console.log("Document added successfully:", addCertificate.id);
+    } catch (error) {
+      console.error("Error during submission:", error);
+      alert("Failed to submit data");
+    } finally {
+      // Reset form
+      setFormData({
+        title: "",
+        company_name: "",
+        iconBg: "",
+        date: "",
+        points: "",
+      });
+      setImage(null);
+      setImagepreview(null);
+      setImageError(null);
+      setError({});
+    }
   };
 
   return (

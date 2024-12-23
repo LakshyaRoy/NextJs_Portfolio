@@ -3,6 +3,8 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import InputField from "@/components/MicroComponents/InputField";
 import TextArea from "@/components/MicroComponents/TextArea";
+import { firestore } from "@/firebase/Firebase";
+import { addDoc, collection } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -46,6 +48,8 @@ const Page = () => {
   const [error, setError] = useState<Partial<FormData>>({});
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
+
+  const db = collection(firestore, "projects");
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -196,6 +200,65 @@ const Page = () => {
 
     if (handleError()) {
       return alert("Form submission failed due to validation errors");
+    }
+
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+    if (!uploadPreset) {
+      console.error("Cloudinary upload preset is missing");
+      return;
+    }
+
+    const cloudinaryFormData = new FormData();
+    cloudinaryFormData.append("file", image);
+    cloudinaryFormData.append("upload_preset", uploadPreset);
+
+    const uploadImage = () =>
+      new Promise<string>(async (resolve, reject) => {
+        try {
+          const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            {
+              method: "POST",
+              body: cloudinaryFormData,
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to upload image");
+          }
+
+          const data = await response.json();
+          resolve(data.secure_url); // Return the image URL
+        } catch (err) {
+          reject(err); // Reject with the error
+        }
+      });
+
+    try {
+      const imageUrl = await uploadImage();
+      if (!imageUrl) {
+        alert("Failed to upload image");
+        return;
+      }
+
+      const docData = {
+        name: formData.name,
+        source_code_link: formData.source_code_link,
+        website_link: formData.website_link,
+        description: formData.description,
+        image: imageUrl,
+        tags,
+      };
+
+      try {
+        const addProject = await addDoc(db, docData);
+        console.log("Document added", addProject);
+      } catch (error) {
+        console.error("Error adding document:", error);
+      }
+    } catch (err) {
+      console.error("Error during image upload:", err);
+      alert("Failed to add certificate");
     }
 
     const data = {

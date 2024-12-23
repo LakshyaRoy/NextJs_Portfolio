@@ -11,9 +11,33 @@ import { IoMdPeople } from "react-icons/io";
 import { FiBriefcase } from "react-icons/fi";
 import DogGif from "@/assets/Dog.gif";
 import Image from "next/image";
+import { useStore } from "@/zustand/store";
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
+
+  const {
+    certificate,
+    techstack,
+    experience,
+    testimonial,
+    projects,
+    fetchData,
+  } = useStore();
+
+  useEffect(() => {
+    if (
+      !certificate.data.length ||
+      !techstack.data.length ||
+      !experience.data.length ||
+      !testimonial.data.length ||
+      !projects.data.length
+    )
+      fetchData();
+  }, []);
+
+  console.log(certificate, techstack, experience, testimonial, projects);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authentication, (user) => {
       console.log(user);
@@ -48,22 +72,27 @@ const Page = () => {
   const dashboardArray = [
     {
       name: "Certificates",
-      value: "2",
+      value: certificate?.data?.length || 0,
       icon: GrCertificate,
     },
     {
       name: "Projects",
-      value: "12",
+      value: projects?.data?.length || 0,
       icon: GrProjects,
     },
     {
       name: "Testimonials",
-      value: "15",
+      value: testimonial?.data?.length || 0,
       icon: IoMdPeople,
     },
     {
       name: "Experiences",
-      value: "12",
+      value: experience?.data?.length || 0,
+      icon: FiBriefcase,
+    },
+    {
+      name: "Techstacks",
+      value: techstack?.data?.length || 0,
       icon: FiBriefcase,
     },
   ];

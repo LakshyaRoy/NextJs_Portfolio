@@ -4,10 +4,11 @@ import HeaderText from "@/components/MicroComponents/HeaderText";
 import SearchInput from "@/components/MicroComponents/SearchInput";
 import SortInput from "@/components/MicroComponents/SortInput";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiMenuKebab, CiSearch } from "react-icons/ci";
 import { IoMdAdd } from "react-icons/io";
 import { FaTrash, FaEdit } from "react-icons/fa";
+import { useStore } from "@/zustand/store";
 
 // Mock data - replace with actual data fetching logic
 const certificateData = [
@@ -60,6 +61,28 @@ const CertificateOptionsMenu = ({ isOpen, onClose }) => {
 const Certificates = () => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
+  const {
+    certificate,
+    techstack,
+    experience,
+    testimonial,
+    projects,
+    fetchData,
+  } = useStore();
+
+  useEffect(() => {
+    if (
+      !certificate.data.length ||
+      !techstack.data.length ||
+      !experience.data.length ||
+      !testimonial.data.length ||
+      !projects.data.length
+    )
+      fetchData();
+  }, []);
+
+  const { data, loading } = certificate;
+
   const toggleMenu = (id: number) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -89,7 +112,7 @@ const Certificates = () => {
           {/* Section Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
             <h2 className="text-lg font-semibold text-white">
-              {certificateData.length} Certificates
+              {data.length} Certificates
             </h2>
             <Link
               href="/add/certificates"
@@ -102,7 +125,7 @@ const Certificates = () => {
 
           {/* Mobile View - Card Layout */}
           <div className="block sm:hidden">
-            {certificateData.map((cert) => (
+            {data?.map((cert) => (
               <div
                 key={cert.id}
                 className="p-4 border-b border-white/10 relative"
@@ -116,7 +139,9 @@ const Certificates = () => {
                   <div className="flex-grow">
                     <h3 className="text-white font-semibold">{cert.name}</h3>
                     <p className="text-white/50 text-sm">{cert.source}</p>
-                    <p className="text-white/50 text-sm">{cert.date}</p>
+                    <p className="text-white/50 text-sm">
+                      {cert.createdAt?.seconds}
+                    </p>
                   </div>
                   <div
                     className="cursor-pointer text-white/50 hover:text-white relative "
@@ -144,8 +169,16 @@ const Certificates = () => {
               <div className="text-left">Actions</div>
             </div>
 
+            {loading && (
+              <div>
+                <div className="w-full h-100 flex items-center justify-center">
+                  <div className="text-white text-lg">Loading...</div>
+                </div>
+              </div>
+            )}
+
             {/* Table Body */}
-            {certificateData.map((cert, index) => (
+            {data?.map((cert, index) => (
               <div
                 key={cert.id}
                 className="relative grid grid-cols-5 gap-4 py-3 text-sm px-5 border-b border-white/10 last:border-b-0 items-center"

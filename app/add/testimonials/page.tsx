@@ -2,8 +2,9 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import InputField from "@/components/MicroComponents/InputField";
 import TextArea from "@/components/MicroComponents/TextArea";
-import { authentication } from "@/firebase/Firebase";
+import { authentication, firestore } from "@/firebase/Firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -42,6 +43,8 @@ const Page = () => {
   const [quote, setQuote] = useState<string>("");
   const [error, setError] = useState<Partial<authorData>>({});
   const [quoteError, setQuoteError] = useState<string>("");
+
+  const dbCollection = collection(firestore, "testimonials");
 
   const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -155,28 +158,103 @@ const Page = () => {
     return isError; // Return error status
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (handleError() || handleRevieweeError()) {
       // alert("Form submission failed due to validation errors");
       return;
     }
+    if (!image) {
+      return alert("Please select an image");
+    }
 
-    const newReview = {
-      author: {
-        name: author.name,
-        designation: author.designation,
-        linkedin: author.linkedin,
-        image: image,
-      },
-      reviewee: {
-        name: reviewee.reviewee_name,
-        linkedin: reviewee.reviewee_linkedin,
-      },
-      quote: quote,
-    };
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+    if (!uploadPreset) {
+      console.error("Cloudinary upload preset is missing");
+      return;
+    }
 
-    console.log(newReview);
+    const cloudinaryFormData = new FormData();
+    cloudinaryFormData.append("file", image);
+    cloudinaryFormData.append("upload_preset", uploadPreset);
+
+    const uploadImage = () =>
+      new Promise<string>(async (resolve, reject) => {
+        try {
+          const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            {
+              method: "POST",
+              body: cloudinaryFormData,
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to upload image");
+          }
+
+          const data = await response.json();
+          resolve(data.secure_url); // Return the image URL
+        } catch (err) {
+          reject(err); // Reject with the error
+        }
+      });
+
+    try {
+      const imageUrl = await uploadImage();
+      if (!imageUrl) {
+        alert("Failed to upload image");
+        return;
+      }
+
+      const docData = {
+        author: {
+          name: author.name,
+          designation: author.designation,
+          linkedin: author.linkedin,
+          image: imageUrl,
+        },
+        reviewee: {
+          name: reviewee.reviewee_name,
+          linkedin: reviewee.reviewee_linkedin,
+        },
+        quote: quote,
+      };
+
+      try {
+        const addCertificate = await addDoc(dbCollection, docData);
+        console.log("Document added", addCertificate);
+      } catch (error) {
+        console.error("Error adding document:", error);
+      }
+    } catch (err) {
+      console.error("Error during image upload:", err);
+      alert("Failed to add certificate");
+    }
+
+    // Reset form fields and errors
+    setAuthor({ name: "", designation: "", linkedin: "" });
+    setReviewee({ reviewee_name: "", reviewee_linkedin: "" });
+    setQuote("");
+    setImage(null);
+    setImagepreview(null);
+    setError({});
+
+    // const newReview = {
+    //   author: {
+    //     name: author.name,
+    //     designation: author.designation,
+    //     linkedin: author.linkedin,
+    //     image: image,
+    //   },
+    //   reviewee: {
+    //     name: reviewee.reviewee_name,
+    //     linkedin: reviewee.reviewee_linkedin,
+    //   },
+    //   quote: quote,
+    // };
+
+    // console.log(newReview);
   };
 
   return (
