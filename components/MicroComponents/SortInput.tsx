@@ -24,7 +24,7 @@ const SortInput: React.FC<SortInputProps> = ({
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSort = event.target.value as SortOption;
     setSelectedSort(newSort);
-
+    console.log("Sort changed to:", newSort); // Debug log
     // Call the onSortChange callback if provided
     if (onSortChange) {
       onSortChange(newSort);

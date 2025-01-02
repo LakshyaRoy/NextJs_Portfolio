@@ -13,30 +13,72 @@ import DogGif from "@/assets/Dog.gif";
 import Image from "next/image";
 import { useStore } from "@/zustand/store";
 const Page = () => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [mainLoading, setMainLoading] = useState<boolean>(true);
   const router = useRouter();
 
   const {
+    fetchCertificates,
     certificate,
+    fetchTechstack,
     techstack,
+    fetchExperience,
     experience,
+    fetchTestimonial,
     testimonial,
+    fetchProjects,
     projects,
-    fetchData,
   } = useStore();
 
+  const { data: certificateData, loading: certificateLoading } = certificate;
+  const { data: testimonialData, loading: testimonialLoading } = testimonial;
+  const { data: projectsData, loading: projectsLoading } = projects;
+  const { data: techstackData, loading: techstackLoading } = techstack;
+  const { data: experienceData, loading: experienceLoading } = experience;
+  const certificateApi = async () => {
+    if (!certificateData?.length) {
+      await fetchCertificates();
+    }
+  };
+
+  const techstackApi = async () => {
+    if (!techstackData?.length) {
+      await fetchTechstack();
+    }
+  };
+
+  const experienceApi = async () => {
+    if (!experienceData?.length) {
+      await fetchExperience();
+    }
+  };
+
+  const testimonialApi = async () => {
+    if (!testimonialData?.length) {
+      await fetchTestimonial();
+    }
+  };
+
+  const projectsApi = async () => {
+    if (!projectsData?.length) {
+      await fetchProjects();
+    }
+  };
+
   useEffect(() => {
-    if (
-      !certificate.data.length ||
-      !techstack.data.length ||
-      !experience.data.length ||
-      !testimonial.data.length ||
-      !projects.data.length
-    )
-      fetchData();
+    certificateApi();
+    techstackApi();
+    experienceApi();
+    testimonialApi();
+    projectsApi();
   }, []);
 
-  console.log(certificate, techstack, experience, testimonial, projects);
+  console.log(
+    certificateData,
+    techstackData,
+    experienceData,
+    testimonialData,
+    projectsData
+  );
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authentication, (user) => {
@@ -45,14 +87,14 @@ const Page = () => {
       if (!user) {
         router.push("/login");
       } else {
-        setLoading(false);
+        setMainLoading(false);
       }
     });
 
     return () => unsubscribe(); // Cleanup
   }, [router]);
 
-  if (loading) {
+  if (mainLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#101010] to-[#202020] text-white gap-4">
         <Image
@@ -72,27 +114,27 @@ const Page = () => {
   const dashboardArray = [
     {
       name: "Certificates",
-      value: certificate?.data?.length || 0,
+      value: certificateData?.length || 0,
       icon: GrCertificate,
     },
     {
       name: "Projects",
-      value: projects?.data?.length || 0,
+      value: projectsData?.length || 0,
       icon: GrProjects,
     },
     {
       name: "Testimonials",
-      value: testimonial?.data?.length || 0,
+      value: testimonialData?.length || 0,
       icon: IoMdPeople,
     },
     {
       name: "Experiences",
-      value: experience?.data?.length || 0,
+      value: experienceData?.length || 0,
       icon: FiBriefcase,
     },
     {
       name: "Techstacks",
-      value: techstack?.data?.length || 0,
+      value: techstackData?.length || 0,
       icon: FiBriefcase,
     },
   ];

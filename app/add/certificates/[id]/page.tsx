@@ -3,13 +3,14 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import InputField from "@/components/MicroComponents/InputField";
 import { firestore } from "@/firebase/Firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { IoIosSend, IoMdAdd } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
 import { useStore } from "@/zustand/store";
+import { useParams, useRouter } from "next/navigation";
 
 const AddCertificates: React.FC = () => {
   interface FormData {
@@ -21,7 +22,6 @@ const AddCertificates: React.FC = () => {
     public_id: string;
   }
 
-  const db = collection(firestore, "certificates");
   const { fetchCertificates } = useStore();
   const certificateApi = async () => {
     await fetchCertificates();
@@ -34,7 +34,9 @@ const AddCertificates: React.FC = () => {
   const [error, setError] = useState<Partial<FormData>>({});
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
-
+  const [imageId, setImageid] = useState<string | null>(null);
+  const { id } = useParams();
+  const router = useRouter();
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
@@ -80,92 +82,108 @@ const AddCertificates: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!image) {
-      return alert("Please select an image");
-    }
-    if (handleError()) {
-      return alert("Form submission failed due to validation errors");
-    }
-
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    if (!uploadPreset) {
-      console.error("Cloudinary upload preset is missing");
-      return;
-    }
-
-    const cloudinaryFormData = new FormData();
-    cloudinaryFormData.append("file", image);
-    cloudinaryFormData.append("upload_preset", uploadPreset);
-
-    const uploadImage = () =>
-      new Promise<ImageParameters>(async (resolve, reject) => {
-        // Changed return type
-        try {
-          const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-            {
-              method: "POST",
-              body: cloudinaryFormData,
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error("Failed to upload image");
-          }
-
-          const data = await response.json();
-          const imageDetails: ImageParameters = {
-            secure_url: data.secure_url,
-            public_id: data.public_id,
-          };
-          resolve(imageDetails);
-        } catch (err) {
-          reject(err);
-        }
-      });
-
     try {
-      const data = await uploadImage();
-
-      if (!data) {
-        alert("Failed to upload image");
+      // Validate form inputs
+      if (!imagepreview && !image) {
+        alert("Please select an image");
         return;
       }
 
-      const imageUrl = data?.secure_url;
-      const imageId = data?.public_id;
+      if (handleError()) {
+        alert("Form submission failed due to validation errors");
+        return;
+      }
 
+      // Check environment variables
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+      if (!uploadPreset || !cloudName) {
+        throw new Error("Missing Cloudinary configuration");
+      }
+
+      // Handle image upload if there's a new image
+      let imageDetails = null;
+      if (image) {
+        const cloudinaryFormData = new FormData();
+        cloudinaryFormData.append("file", image);
+        cloudinaryFormData.append("upload_preset", uploadPreset);
+
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          {
+            method: "POST",
+            body: cloudinaryFormData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const data = await response.json();
+        imageDetails = {
+          secure_url: data.secure_url,
+          public_id: data.public_id,
+        };
+      }
+
+      // Prepare document data for Firestore
       const docData = {
         name: formData.name,
         source: formData.source,
-        image: imageUrl,
-        imageId: imageId,
-        createdAt: new Date(),
+        image: imageDetails?.secure_url || imagepreview, // Use new image URL or keep existing preview
+        imageId: imageDetails?.public_id || imageId, // Keep track of existing image ID
+        updatedAt: new Date(), // Add update timestamp
       };
 
-      try {
-        const addCertificate = await addDoc(db, docData);
-        console.log("Document added", addCertificate);
-        certificateApi();
-      } catch (error) {
-        console.error("Error adding document:", error);
-      }
-    } catch (err) {
-      console.error("Error during image upload:", err);
-      alert("Failed to add certificate");
-    }
+      // Update the document directly using doc() reference
+      const docRef = doc(firestore, "certificates", id);
+      await updateDoc(docRef, docData);
 
-    // Reset Form
-    setFormData({ name: "", source: "" });
-    setImage(null);
-    setImagepreview(null);
-    setError({});
+      // Refresh certificates list
+      await certificateApi();
+
+      // Reset form state
+      setFormData({ name: "", source: "" });
+      setImage(null);
+      setImagepreview(null);
+      setError({});
+
+      alert("Certificate updated successfully");
+      router.push("/dashboard/certificates");
+    } catch (error) {
+      console.error("Error during form submission:", error);
+      alert(
+        error instanceof Error ? error.message : "Failed to update certificate"
+      );
+    }
   };
 
   const removeImage = () => {
     setImage(null);
     setImagepreview(null);
   };
+
+  useEffect(() => {
+    if (id) {
+      const fetchCertificateData = async () => {
+        const docRef = doc(firestore, "certificates", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const certificateData = docSnap.data();
+          console.log(certificateData);
+          setFormData({
+            name: certificateData.name,
+            source: certificateData.source,
+          });
+          setImageid(certificateData.imageId);
+          setImagepreview(certificateData.image);
+        }
+      };
+      fetchCertificateData();
+    }
+  }, [id]);
 
   return (
     <DashboardLayout>
@@ -253,7 +271,7 @@ const AddCertificates: React.FC = () => {
                     focus:outline-none 
                     focus:ring-2 focus:ring-neutral-500"
                 >
-                  <span>Submit</span>
+                  <span>Edit Certificate</span>
                   <IoIosSend />
                 </button>
               </div>

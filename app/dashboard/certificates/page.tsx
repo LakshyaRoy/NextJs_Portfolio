@@ -9,47 +9,63 @@ import { CiMenuKebab, CiSearch } from "react-icons/ci";
 import { IoMdAdd } from "react-icons/io";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { useStore } from "@/zustand/store";
+import { deleteDoc, doc } from "firebase/firestore";
+import { firestore } from "@/firebase/Firebase";
+import { useRouter } from "next/navigation";
 
 // Mock data - replace with actual data fetching logic
-const certificateData = [
-  {
-    id: 1,
-    image: "https://manage-pro.netlify.app/webpage.png",
-    name: "Technical Club",
-    source: "Bit Mesra",
-    date: "Jan 2023",
-  },
-  {
-    id: 2,
-    image: "https://manage-pro.netlify.app/webpage.png",
-    name: "Technical Club",
-    source: "Bit Mesra",
-    date: "Jan 2023",
-  },
-  {
-    id: 3,
-    image: "https://manage-pro.netlify.app/webpage.png",
-    name: "Technical Club",
-    source: "Bit Mesra",
-    date: "Jan 2023",
-  },
-];
 
-const CertificateOptionsMenu = ({ isOpen, onClose }) => {
+interface CertificateOptions {
+  isOpen: boolean;
+  id: string;
+  imageId: string;
+  onClose: () => void;
+  setFilteredData: (data: any) => void;
+}
+
+const CertificateOptionsMenu: React.FC<CertificateOptions> = ({
+  isOpen,
+  onClose,
+  id,
+  imageId,
+  setFilteredData,
+}) => {
+  const router = useRouter();
+
   if (!isOpen) return null;
 
+  const handleDelete = async (id: string, imageId: string) => {
+    try {
+      // Delete from Firestore
+      const docRef = doc(firestore, "certificates", id);
+      await deleteDoc(docRef);
+      setFilteredData((prevData: any) =>
+        prevData.filter((item: any) => item.id !== id)
+      );
+    } catch (error) {
+      console.error("Error during delete operation:", error);
+    } finally {
+      onClose();
+    }
+  };
+
+  const handleEdit = () => {
+    router.push(`/add/certificates/${id}`); // Navigate to edit page with the certificate ID
+    onClose(); // Close the menu
+  };
+
   return (
-    <div className="absolute right-7 md:right-20 top-0 mt-2 bg-[#333] border border-white/10 rounded-md shadow-lg z-10">
+    <div className="absolute right-7 md:right-20 top-0 mt-2 bg-[#333] border border-white/10 rounded-md shadow-lg z-20">
       <ul className="py-1">
         <li
           className="flex items-center gap-2 px-4 py-2 hover:bg-[#444] cursor-pointer text-white/80 hover:text-white"
-          onClick={onClose}
+          onClick={handleEdit}
         >
           <FaEdit /> Edit
         </li>
         <li
           className="flex items-center gap-2 px-4 py-2 hover:bg-[#444] cursor-pointer text-red-400 hover:text-red-300"
-          onClick={onClose}
+          onClick={() => handleDelete(id, imageId)}
         >
           <FaTrash /> Delete
         </li>
@@ -60,31 +76,64 @@ const CertificateOptionsMenu = ({ isOpen, onClose }) => {
 
 const Certificates = () => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [filteredData, setFilteredData] = useState<any | []>([]);
+  const { fetchCertificates, certificate } = useStore();
+  const { data, loading } = certificate;
 
-  const {
-    certificate,
-    techstack,
-    experience,
-    testimonial,
-    projects,
-    fetchData,
-  } = useStore();
+  console.log(filteredData);
+  const certificateApi = async () => {
+    if (!data.length) {
+      await fetchCertificates();
+    }
+  };
 
   useEffect(() => {
-    if (
-      !certificate.data.length ||
-      !techstack.data.length ||
-      !experience.data.length ||
-      !testimonial.data.length ||
-      !projects.data.length
-    )
-      fetchData();
+    certificateApi();
   }, []);
-
-  const { data, loading } = certificate;
 
   const toggleMenu = (id: number) => {
     setOpenMenuId(openMenuId === id ? null : id);
+  };
+
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
+
+  const handleSearchedData = (value: string) => {
+    const filterData = data.filter((data) =>
+      data.name.toLowerCase().includes(value.toLowerCase())
+    );
+
+    if (value.trim() === "") {
+      setFilteredData(data);
+      return;
+    }
+    setFilteredData(filterData);
+  };
+
+  const handleSortedData = (value: string) => {
+    // Create a copy of the filtered data
+    const sortedData = [...filteredData].sort((a: any, b: any) => {
+      const timeA =
+        a.createdAt.seconds * 1000 + a.createdAt.nanoseconds / 1000000;
+      const timeB =
+        b.createdAt.seconds * 1000 + b.createdAt.nanoseconds / 1000000;
+
+      if (value === "newest") {
+        return timeB - timeA; // Sort newest first
+      } else if (value === "oldest") {
+        return timeA - timeB; // Sort oldest first
+      } else if (value === "a-z") {
+        return a.name.localeCompare(b.name); // Alphabetical order
+      } else if (value === "z-a") {
+        return b.name.localeCompare(a.name); // Reverse alphabetical order
+      }
+
+      return 0;
+    });
+
+    console.log("Sorted data:", sortedData);
+    setFilteredData(sortedData);
   };
 
   return (
@@ -98,10 +147,10 @@ const Certificates = () => {
             {/* Search and Sort */}
             <div className="flex flex-wrap items-center gap-4 w-full sm:w-3/4">
               <div className="w-full sm:flex-1">
-                <SearchInput />
+                <SearchInput onSearch={handleSearchedData} />
               </div>
               <div className="w-full sm:flex-1">
-                <SortInput />
+                <SortInput onSortChange={handleSortedData} />
               </div>
             </div>
           </div>
@@ -112,7 +161,7 @@ const Certificates = () => {
           {/* Section Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
             <h2 className="text-lg font-semibold text-white">
-              {data.length} Certificates
+              {filteredData.length} Certificates
             </h2>
             <Link
               href="/add/certificates"
@@ -125,7 +174,7 @@ const Certificates = () => {
 
           {/* Mobile View - Card Layout */}
           <div className="block sm:hidden">
-            {data?.map((cert) => (
+            {filteredData?.map((cert) => (
               <div
                 key={cert.id}
                 className="p-4 border-b border-white/10 relative"
@@ -151,6 +200,9 @@ const Certificates = () => {
                     <CertificateOptionsMenu
                       isOpen={openMenuId === cert.id}
                       onClose={() => setOpenMenuId(null)}
+                      id={cert.id}
+                      imageId={cert.imageId}
+                      setFilteredData={setFilteredData}
                     />
                   </div>
                 </div>
@@ -159,7 +211,7 @@ const Certificates = () => {
           </div>
 
           {/* Desktop View - Table Layout */}
-          <div className="hidden sm:block overflow-x-auto">
+          <div className="hidden sm:block h-full">
             {/* Table Header */}
             <div className="grid grid-cols-5 gap-4 py-3 bg-[#333] font-semibold border-b border-white/10 text-sm px-5">
               <div className="text-left">S No.</div>
@@ -171,17 +223,23 @@ const Certificates = () => {
 
             {loading && (
               <div>
-                <div className="w-full h-100 flex items-center justify-center">
+                <div className="w-full h-[50vh] flex items-center justify-center">
                   <div className="text-white text-lg">Loading...</div>
                 </div>
               </div>
             )}
 
+            {!loading && filteredData?.length === 0 && (
+              <div className="w-full h-[50vh] flex items-center justify-center ">
+                <div className="text-white text-lg">No certificates found</div>
+              </div>
+            )}
+
             {/* Table Body */}
-            {data?.map((cert, index) => (
+            {filteredData?.map((cert, index) => (
               <div
                 key={cert.id}
-                className="relative grid grid-cols-5 gap-4 py-3 text-sm px-5 border-b border-white/10 last:border-b-0 items-center"
+                className="relative grid grid-cols-5 gap-4 py-3 text-sm px-5 border-b border-white/10 last:border-b-0 items-center "
               >
                 <div className="text-white/80">{index + 1}</div>
                 <div>
@@ -203,6 +261,9 @@ const Certificates = () => {
                     <CertificateOptionsMenu
                       isOpen={openMenuId === cert.id}
                       onClose={() => setOpenMenuId(null)}
+                      id={cert.id}
+                      imageId={cert?.imageId}
+                      setFilteredData={setFilteredData}
                     />
                   </div>
                 </div>

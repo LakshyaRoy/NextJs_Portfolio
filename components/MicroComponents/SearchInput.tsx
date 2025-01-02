@@ -24,7 +24,6 @@ const SearchInput: React.FC<SearchInputProps> = ({
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchTerm(value);
-
     // Call the onSearch callback if provided
     if (onSearch) {
       onSearch(value);
