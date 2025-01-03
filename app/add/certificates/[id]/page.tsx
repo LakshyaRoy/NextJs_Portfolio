@@ -17,11 +17,6 @@ const AddCertificates: React.FC = () => {
     name: string;
     source: string;
   }
-  interface ImageParameters {
-    secure_url: string;
-    public_id: string;
-  }
-
   const { fetchCertificates } = useStore();
   const certificateApi = async () => {
     await fetchCertificates();
@@ -35,6 +30,7 @@ const AddCertificates: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
   const [imageId, setImageid] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const { id } = useParams();
   const router = useRouter();
   const handleImageChange = (
@@ -46,6 +42,7 @@ const AddCertificates: React.FC = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setImagepreview(reader.result as string);
+        setImageError(null);
       };
       reader.readAsDataURL(file);
     }
@@ -84,8 +81,8 @@ const AddCertificates: React.FC = () => {
 
     try {
       // Validate form inputs
-      if (!imagepreview && !image) {
-        alert("Please select an image");
+      if (!image) {
+        setImageError("Please enter an image");
         return;
       }
 
@@ -104,7 +101,7 @@ const AddCertificates: React.FC = () => {
 
       // Handle image upload if there's a new image
       let imageDetails = null;
-      if (image) {
+      if (!image) {
         const cloudinaryFormData = new FormData();
         cloudinaryFormData.append("file", image);
         cloudinaryFormData.append("upload_preset", uploadPreset);
@@ -163,6 +160,7 @@ const AddCertificates: React.FC = () => {
   const removeImage = () => {
     setImage(null);
     setImagepreview(null);
+    setImageError(null);
   };
 
   useEffect(() => {
@@ -177,6 +175,7 @@ const AddCertificates: React.FC = () => {
             name: certificateData.name,
             source: certificateData.source,
           });
+          setImage(certificateData.image);
           setImageid(certificateData.imageId);
           setImagepreview(certificateData.image);
         }
@@ -239,6 +238,11 @@ const AddCertificates: React.FC = () => {
                     >
                       Remove Image
                     </button>
+                  )}
+                  {imageError && (
+                    <p className="text-red-500 text-center w-full text-xs mt-4">
+                      {imageError}
+                    </p>
                   )}
                 </div>
 

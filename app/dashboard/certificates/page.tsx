@@ -4,7 +4,7 @@ import HeaderText from "@/components/MicroComponents/HeaderText";
 import SearchInput from "@/components/MicroComponents/SearchInput";
 import SortInput from "@/components/MicroComponents/SortInput";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CiMenuKebab, CiSearch } from "react-icons/ci";
 import { IoMdAdd } from "react-icons/io";
 import { FaTrash, FaEdit } from "react-icons/fa";
@@ -49,20 +49,16 @@ const CertificateOptionsMenu: React.FC<CertificateOptions> = ({
     }
   };
 
-  const handleEdit = () => {
-    router.push(`/add/certificates/${id}`); // Navigate to edit page with the certificate ID
-    onClose(); // Close the menu
-  };
-
   return (
     <div className="absolute right-7 md:right-20 top-0 mt-2 bg-[#333] border border-white/10 rounded-md shadow-lg z-20">
       <ul className="py-1">
-        <li
+        <Link
+          href={`/add/certificates/${id}`}
           className="flex items-center gap-2 px-4 py-2 hover:bg-[#444] cursor-pointer text-white/80 hover:text-white"
-          onClick={handleEdit}
+          onClick={onClose}
         >
           <FaEdit /> Edit
-        </li>
+        </Link>
         <li
           className="flex items-center gap-2 px-4 py-2 hover:bg-[#444] cursor-pointer text-red-400 hover:text-red-300"
           onClick={() => handleDelete(id, imageId)}
@@ -135,6 +131,15 @@ const Certificates = () => {
     console.log("Sorted data:", sortedData);
     setFilteredData(sortedData);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openMenuId) setOpenMenuId(null);
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [openMenuId]);
 
   return (
     <DashboardLayout>
