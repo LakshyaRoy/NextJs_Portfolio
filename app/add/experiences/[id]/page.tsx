@@ -9,7 +9,7 @@ import TextArea from "@/components/MicroComponents/TextArea";
 import { IoIosSend } from "react-icons/io";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebase/Firebase";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useStore } from "@/zustand/store";
 const Page = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -18,6 +18,7 @@ const Page = () => {
   const [imageError, setImageError] = useState<string | null>(null);
   const { id } = useParams();
   const { fetchExperience } = useStore();
+  const router = useRouter();
 
   // const dbCollections = collection(firestore, "experiences");
   interface FormData {
@@ -37,7 +38,7 @@ const Page = () => {
   });
 
   const [error, setError] = useState<Partial<FormData>>({});
-
+  const [loading, setLoading] = useState<boolean>(false);
   const experienceApi = async () => {
     await fetchExperience();
   };
@@ -169,9 +170,17 @@ const Page = () => {
         updatedAt: new Date(),
       };
 
-      const docRef = doc(firestore, "experiences", id);
-      await updateDoc(docRef, docData);
-      await experienceApi();
+      try {
+        setLoading(true);
+        const docRef = doc(firestore, "experiences", id);
+        await updateDoc(docRef, docData);
+        await experienceApi();
+        router.push("/dashboard/experiences");
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     } catch (e) {
       console.log(e);
     } finally {
@@ -192,7 +201,7 @@ const Page = () => {
 
   useEffect(() => {
     if (id) {
-      const fetchCertificate = async () => {
+      const fetchExperience = async () => {
         const docRef = doc(firestore, "experiences", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -211,7 +220,7 @@ const Page = () => {
           console.log("No such document!");
         }
       };
-      fetchCertificate();
+      fetchExperience();
     }
   }, [id]);
 
@@ -320,8 +329,9 @@ const Page = () => {
                 </div>
                 <div className="flex justify-center">
                   <button
+                    disabled={loading}
                     type="submit"
-                    className="flex items-center justify-center gap-2   bg-neutral-700 text-white    px-4 py-2 rounded-md  hover:bg-neutral-600 transition-colors  focus:outline-none  focus:ring-2 focus:ring-neutral-500"
+                    className="flex items-center justify-center gap-2   bg-neutral-700 text-white    px-4 py-2 rounded-md  hover:bg-neutral-600 transition-colors  focus:outline-none  focus:ring-2 focus:ring-neutral-500 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <span>Submit Experience</span>
                     <IoIosSend className="text-xl" />
@@ -334,18 +344,6 @@ const Page = () => {
       </div>
     </DashboardLayout>
   );
-};
-
-const data = {
-  title: "Web Developer",
-  company_name: "LifeBonder",
-  icon: "LifeBonder",
-  iconBg: "#383E56",
-  date: "Dec 2023 to Current",
-  points: [
-    "Managed Lifebonder's site for optimal function and user experience. Oversaw updates, design, and performance, utilizing FileZilla FTP for precise version updates and efficient feature integration.",
-    "Guided website version control, ensured accurate updates, and secure deployments via FileZilla FTP. Collaborated for streamlined procedures, maintaining current tech and content.",
-  ],
 };
 
 export default Page;

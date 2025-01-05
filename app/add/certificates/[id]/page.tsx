@@ -26,10 +26,11 @@ const AddCertificates: React.FC = () => {
     name: "",
     source: "",
   });
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Partial<FormData>>({});
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
-  const [imageId, setImageid] = useState<string | null>(null);
+  const [imageId, setImageId] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const { id } = useParams();
   const router = useRouter();
@@ -135,19 +136,22 @@ const AddCertificates: React.FC = () => {
       };
 
       // Update the document directly using doc() reference
-      const docRef = doc(firestore, "certificates", id);
-      await updateDoc(docRef, docData);
-
-      // Refresh certificates list
-      await certificateApi();
+      try {
+        setLoading(true);
+        const docRef = doc(firestore, "certificates", id);
+        await updateDoc(docRef, docData);
+        await certificateApi();
+      } catch (e) {
+        console.error("Error during update certificate:", error);
+      } finally {
+        setLoading(false);
+      }
 
       // Reset form state
       setFormData({ name: "", source: "" });
       setImage(null);
       setImagepreview(null);
       setError({});
-
-      alert("Certificate updated successfully");
       router.push("/dashboard/certificates");
     } catch (error) {
       console.error("Error during form submission:", error);
@@ -176,7 +180,7 @@ const AddCertificates: React.FC = () => {
             source: certificateData.source,
           });
           setImage(certificateData.image);
-          setImageid(certificateData.imageId);
+          setImageId(certificateData.imageId);
           setImagepreview(certificateData.image);
         }
       };
@@ -266,6 +270,7 @@ const AddCertificates: React.FC = () => {
 
                 {/* Submit Button */}
                 <button
+                  disabled={loading}
                   type="submit"
                   className="flex items-center justify-center gap-2 
                     bg-neutral-700 text-white 
@@ -273,7 +278,7 @@ const AddCertificates: React.FC = () => {
                     hover:bg-neutral-600 
                     transition-colors 
                     focus:outline-none 
-                    focus:ring-2 focus:ring-neutral-500"
+                    focus:ring-2 focus:ring-neutral-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span>Edit Certificate</span>
                   <IoIosSend />
