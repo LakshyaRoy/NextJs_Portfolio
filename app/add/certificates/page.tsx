@@ -26,7 +26,7 @@ const AddCertificates: React.FC = () => {
   const certificateApi = async () => {
     await fetchCertificates();
   };
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     source: "",
@@ -144,11 +144,14 @@ const AddCertificates: React.FC = () => {
       };
 
       try {
+        setLoading(true);
         const addCertificate = await addDoc(db, docData);
         console.log("Document added", addCertificate);
         certificateApi();
       } catch (error) {
         console.error("Error adding document:", error);
+      } finally {
+        setLoading(false);
       }
     } catch (err) {
       console.error("Error during image upload:", err);
@@ -244,6 +247,7 @@ const AddCertificates: React.FC = () => {
 
                 {/* Submit Button */}
                 <button
+                  disabled={loading}
                   type="submit"
                   className="flex items-center justify-center gap-2 
                     bg-neutral-700 text-white 
@@ -251,7 +255,7 @@ const AddCertificates: React.FC = () => {
                     hover:bg-neutral-600 
                     transition-colors 
                     focus:outline-none 
-                    focus:ring-2 focus:ring-neutral-500"
+                    focus:ring-2 focus:ring-neutral-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span>Submit</span>
                   <IoIosSend />
