@@ -5,10 +5,11 @@ import InputField from "@/components/MicroComponents/InputField";
 import TextArea from "@/components/MicroComponents/TextArea";
 import { firestore } from "@/firebase/Firebase";
 import { useStore } from "@/zustand/store";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { IoIosSend, IoMdCreate, IoMdTrash } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
 
@@ -24,7 +25,6 @@ const Page = () => {
     name: string;
     color: string;
   }
-
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -36,7 +36,7 @@ const Page = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [tagEditIndex, setTagEditIndex] = useState<number | null>(null);
 
-  console.log(tags);
+  // console.log(tags);
 
   const [tagsDetail, setTagsDetail] = useState<TagsDetail>({
     name: "",
@@ -49,9 +49,11 @@ const Page = () => {
   const [error, setError] = useState<Partial<FormData>>({});
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
-
-  const db = collection(firestore, "projects");
+  const [imageId, setImageId] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const { id } = useParams();
   const { fetchProjects } = useStore();
+  const router = useRouter();
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -86,7 +88,7 @@ const Page = () => {
     setTagEditIndex(index);
     setIsEditing(true);
     setTagsDetail({ name: data.name, color: data.color });
-    console.log(data);
+    // console.log(data);
   };
 
   const handleTags = (
@@ -195,30 +197,33 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // console.log("function is running");
 
-    if (!image) {
-      return alert("Please select an image");
-    }
+    try {
+      if (handleError()) {
+        return alert("Form submission failed due to validation errors");
+      }
+      if (!imagepreview) {
+        return alert("Image is required");
+      }
 
-    if (handleError()) {
-      return alert("Form submission failed due to validation errors");
-    }
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    if (!uploadPreset) {
-      console.error("Cloudinary upload preset is missing");
-      return;
-    }
+      if (!uploadPreset || !cloudName) {
+        throw new Error("Missing Cloudinary configuration");
+      }
 
-    const cloudinaryFormData = new FormData();
-    cloudinaryFormData.append("file", image);
-    cloudinaryFormData.append("upload_preset", uploadPreset);
-
-    const uploadImage = () =>
-      new Promise<string>(async (resolve, reject) => {
+      // Handle image upload only if there's a new image
+      let imageDetails = null;
+      if (image) {
         try {
+          const cloudinaryFormData = new FormData();
+          cloudinaryFormData.append("file", image);
+          cloudinaryFormData.append("upload_preset", uploadPreset);
+
           const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             {
               method: "POST",
               body: cloudinaryFormData,
@@ -226,21 +231,18 @@ const Page = () => {
           );
 
           if (!response.ok) {
-            throw new Error("Failed to upload image");
+            throw new Error(`Failed to upload image: ${await response.text()}`);
           }
 
           const data = await response.json();
-          resolve(data.secure_url); // Return the image URL
-        } catch (err) {
-          reject(err); // Reject with the error
+          imageDetails = {
+            secure_url: data.secure_url,
+            public_id: data.public_id,
+          };
+        } catch (uploadError) {
+          // console.error("Image upload error:", uploadError);
+          throw uploadError;
         }
-      });
-
-    try {
-      const imageUrl = await uploadImage();
-      if (!imageUrl) {
-        alert("Failed to upload image");
-        return;
       }
 
       const docData = {
@@ -248,37 +250,35 @@ const Page = () => {
         source_code_link: formData.source_code_link,
         website_link: formData.website_link,
         description: formData.description,
-        image: imageUrl,
+        image: imageDetails?.secure_url || imagepreview,
+        imageId: imageDetails?.public_id || imageId,
         tags,
-        createdAt: new Date().toISOString(),
+        updatedAt: new Date(),
       };
+      // console.log("Document data to be updated:", docData);
 
       try {
         setLoading(true);
-        const addProject = await addDoc(db, docData);
-        console.log("Document added", addProject);
+        const docRef = doc(firestore, "projects", id);
+        await updateDoc(docRef, docData);
         await fetchProjects();
-      } catch (error) {
-        console.error("Error adding document:", error);
+        router.push("/dashboard/projects");
+      } catch (firestoreError) {
+        console.error("Firestore operation error:", firestoreError);
+        throw firestoreError;
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error during image upload:", err);
-      alert("Failed to add certificate");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      alert("Failed to update project. Please check console for details.");
+      return;
     }
 
-    const data = {
-      name: formData.name,
-      source_code_link: formData.source_code_link,
-      website_link: formData.website_link,
-      description: formData.description,
-      image,
-      tags,
-    };
-    console.log(data);
+    // Only reset form if everything succeeded
+    resetForm();
+  };
 
-    // Reset Form
+  const resetForm = () => {
     setFormData({
       name: "",
       source_code_link: "",
@@ -296,6 +296,28 @@ const Page = () => {
     setImage(null);
     setImagepreview(null);
   };
+
+  useEffect(() => {
+    if (id) {
+      const fetchProjects = async () => {
+        const docRef = doc(firestore, "projects", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFormData({
+            name: data.name,
+            source_code_link: data.source_code_link,
+            website_link: data.website_link,
+            description: data.description,
+          });
+          setImagepreview(data.image);
+          setImageId(data?.imageId || "");
+          setTags(data.tags);
+        }
+      };
+      fetchProjects();
+    }
+  }, [id]);
 
   return (
     <DashboardLayout>
