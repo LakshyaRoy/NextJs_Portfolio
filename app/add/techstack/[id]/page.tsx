@@ -3,18 +3,19 @@ import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import InputField from "@/components/MicroComponents/InputField";
 import { firestore } from "@/firebase/Firebase";
 import { useStore } from "@/zustand/store";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { IoIosSend } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
 
 const Page = () => {
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
-  const [loading, setLaoding] = useState<boolean>(false);
-  const { fetchTechstack } = useStore();
+  const [imageId, setImageid] = useState<string | null>(null);
+
   const dbCollection = collection(firestore, "techstacks");
   interface FormData {
     name: string;
@@ -26,7 +27,10 @@ const Page = () => {
     description: "",
   });
   const [error, setError] = useState<Partial<FormData>>({});
-
+  const [loading, setLoading] = useState<boolean>(false);
+  const { fetchTechstack } = useStore();
+  const router = useRouter();
+  const { id } = useParams();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevs) => ({
@@ -79,30 +83,30 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!image) {
-      return alert("Please select an image");
-    }
+    try {
+      // Validation for required fields
+      if (!validation()) {
+        return alert("Please fill all the fields");
+      }
 
-    if (!validation()) {
-      return;
-    }
+      // Retrieve Cloudinary configuration from environment variables
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    if (!uploadPreset) {
-      console.error("Cloudinary upload preset is missing");
-      return;
-    }
+      if (!uploadPreset || !cloudName) {
+        throw new Error("Missing Cloudinary configuration");
+      }
 
-    const cloudinaryFormData = new FormData();
-    cloudinaryFormData.append("file", image);
-    cloudinaryFormData.append("upload_preset", uploadPreset);
-
-    // Function to upload image to Cloudinary
-    const uploadImage = () =>
-      new Promise<string>(async (resolve, reject) => {
+      // Handle image upload
+      let imageDetails = null;
+      if (image) {
         try {
+          const cloudinaryFormData = new FormData();
+          cloudinaryFormData.append("file", image);
+          cloudinaryFormData.append("upload_preset", uploadPreset);
+
           const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             {
               method: "POST",
               body: cloudinaryFormData,
@@ -110,47 +114,45 @@ const Page = () => {
           );
 
           if (!response.ok) {
-            throw new Error("Failed to upload image");
+            throw new Error(`Failed to upload image: ${await response.text()}`);
           }
 
           const data = await response.json();
-          resolve(data.secure_url); // Return the image URL
-        } catch (err) {
-          reject(err); // Reject with the error
+          imageDetails = {
+            secure_url: data.secure_url,
+            public_id: data.public_id,
+          };
+        } catch (uploadError) {
+          console.error("Image upload error:", uploadError);
+          throw uploadError;
         }
-      });
-
-    try {
-      // Upload image and get the URL
-      const imageLink = await uploadImage();
-
-      if (!imageLink) {
-        alert("Failed to upload image");
-        return;
       }
 
-      // Prepare document data
+      // Prepare data for Firestore
       const docData = {
         name: formData.name,
         description: formData.description,
-        image: imageLink,
+        image: imageDetails?.secure_url || imagepreview,
+        public_id: imageDetails?.public_id || imageId || "",
         createdAt: new Date(),
       };
 
-      // Add data to Firebase
+      // Firestore operations
       try {
-        setLaoding(true);
-        const addTeckStack = await addDoc(dbCollection, docData);
+        setLoading(true);
+        const docRef = doc(firestore, "techstacks", id);
+        await updateDoc(docRef, docData);
         await fetchTechstack();
-        console.log("Document added", addTeckStack);
-      } catch (error) {
-        console.error("Error adding document:", error);
+        router.push("/dashboard/techstack");
+        resetForm();
+      } catch (firestoreError) {
+        console.error("Firestore operation error:", firestoreError);
+        throw firestoreError;
       } finally {
-        setLaoding(false);
+        setLoading(false);
       }
-      resetForm(); // Reset the form after successful submission
-    } catch (err) {
-      console.error("Error during submission:", err);
+    } catch (error) {
+      console.error("Error during submission:", error);
       alert("Something went wrong. Please try again.");
     }
   };
@@ -161,6 +163,24 @@ const Page = () => {
     setImagepreview(null);
     setError({});
   };
+
+  useEffect(() => {
+    if (id) {
+      const fetchProjects = async () => {
+        const docRef = doc(firestore, "techstacks", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFormData({
+            name: data.name,
+            description: data.description,
+          });
+          setImagepreview(data.image);
+        }
+      };
+      fetchProjects();
+    }
+  }, [id]);
 
   return (
     <DashboardLayout>
