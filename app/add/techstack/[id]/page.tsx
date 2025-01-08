@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import InputField from "@/components/MicroComponents/InputField";
 import { firestore } from "@/firebase/Firebase";
 import { useStore } from "@/zustand/store";
-import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";

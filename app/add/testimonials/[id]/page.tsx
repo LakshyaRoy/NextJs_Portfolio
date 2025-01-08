@@ -4,16 +4,19 @@ import InputField from "@/components/MicroComponents/InputField";
 import TextArea from "@/components/MicroComponents/TextArea";
 import { firestore } from "@/firebase/Firebase";
 import { useStore } from "@/zustand/store";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { IoIosSend } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
 
 const Page = () => {
   const [imagepreview, setImagepreview] = useState<string | null>(null);
   const [image, setImage] = useState<File | null>(null);
+  const router = useRouter();
+  const { id } = useParams();
   interface authorData {
     name: string;
     designation: string;
@@ -43,6 +46,7 @@ const Page = () => {
   const [error, setError] = useState<Partial<authorData>>({});
   const [quoteError, setQuoteError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [imageId, setImageId] = useState<string>("");
   const dbCollection = collection(firestore, "testimonials");
   const { fetchTestimonial } = useStore();
 
@@ -160,29 +164,31 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (handleError() || handleRevieweeError()) {
-      // alert("Form submission failed due to validation errors");
-      return;
-    }
-    if (!image) {
-      return alert("Please select an image");
-    }
 
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    if (!uploadPreset) {
-      console.error("Cloudinary upload preset is missing");
-      return;
-    }
+    try {
+      if (handleError() || handleRevieweeError()) {
+        return alert("Please fill in all the required fields.");
+      }
+      if (!image) {
+        return alert("Please select an image");
+      }
 
-    const cloudinaryFormData = new FormData();
-    cloudinaryFormData.append("file", image);
-    cloudinaryFormData.append("upload_preset", uploadPreset);
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
-    const uploadImage = () =>
-      new Promise<string>(async (resolve, reject) => {
+      if (!uploadPreset || !cloudName) {
+        throw new Error("Missing Cloudinary configuration");
+      }
+
+      let imageDetails = null;
+      if (!image) {
         try {
+          const cloudinaryFormData = new FormData();
+          cloudinaryFormData.append("file", image);
+          cloudinaryFormData.append("upload_preset", uploadPreset);
+
           const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
             {
               method: "POST",
               body: cloudinaryFormData,
@@ -190,21 +196,18 @@ const Page = () => {
           );
 
           if (!response.ok) {
-            throw new Error("Failed to upload image");
+            throw new Error(`Failed to upload image: ${await response.text()}`);
           }
 
           const data = await response.json();
-          resolve(data.secure_url); // Return the image URL
-        } catch (err) {
-          reject(err); // Reject with the error
+          imageDetails = {
+            secure_url: data.secure_url,
+            public_id: data.public_id,
+          };
+        } catch (uploadError) {
+          console.error("Image upload error:", uploadError);
+          throw uploadError;
         }
-      });
-
-    try {
-      const imageUrl = await uploadImage();
-      if (!imageUrl) {
-        alert("Failed to upload image");
-        return;
       }
 
       const docData = {
@@ -212,7 +215,8 @@ const Page = () => {
           name: author.name,
           designation: author.designation,
           linkedin: author.linkedin,
-          image: imageUrl,
+          image: imageDetails?.secure_url || imagepreview,
+          image_id: imageDetails?.public_id || imageId || "",
         },
         reviewee: {
           name: reviewee.reviewee_name,
@@ -224,17 +228,19 @@ const Page = () => {
 
       try {
         setLoading(true);
-        const addCertificate = await addDoc(dbCollection, docData);
-        console.log("Document added", addCertificate);
+        const docRef = doc(firestore, "testimonials", id);
+        await updateDoc(docRef, docData);
         await fetchTestimonial();
-      } catch (error) {
-        console.error("Error adding document:", error);
+        router.push("/dashboard/testimonials");
+      } catch (firestoreError) {
+        console.error("Firestore operation error:", firestoreError);
+        throw firestoreError;
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error during image upload:", err);
-      alert("Failed to add certificate");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Form submission error:", error);
+      alert("Form submission failed due to validation errors");
     }
 
     // Reset form fields and errors
@@ -245,6 +251,32 @@ const Page = () => {
     setImagepreview(null);
     setError({});
   };
+
+  useEffect(() => {
+    if (id) {
+      const fetchProjects = async () => {
+        const docRef = doc(firestore, "testimonials", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setAuthor({
+            name: data?.author?.name,
+            designation: data?.author?.designation,
+            linkedin: data?.author?.linkedin,
+          });
+          setReviewee({
+            reviewee_name: data?.reviewee?.name,
+            reviewee_linkedin: data?.reviewee?.linkedin,
+          });
+          setQuote(data?.quote);
+          setImage(data?.author?.image);
+          setImagepreview(data?.author?.image);
+          setImageId(data?.author?.image_id);
+        }
+      };
+      fetchProjects();
+    }
+  }, [id]);
 
   return (
     <DashboardLayout>
@@ -357,8 +389,8 @@ const Page = () => {
                   {/* Submit Button */}
                   <div className="flex justify-center">
                     <button
-                      type="submit"
                       disabled={loading}
+                      type="submit"
                       className="flex items-center justify-center gap-2 
                     bg-neutral-700 text-white 
                     px-4 py-2 rounded-md 
@@ -382,20 +414,3 @@ const Page = () => {
 };
 
 export default Page;
-
-const data = {
-  review: {
-    quote:
-      "Lakshya Roy has been at LifeBonder since December 4, 2023, until May 31, 2024. Lakshya has been very reliable all through his internship, and more skilled than you would expect from an intern. He has done a great job helping us improve and optimize our website. If there is something he does not know or have experience in, then he researches and finds a solution. Having Lakshya Roy with us has been a positive experience. He communicates clearly and is always responsive, something that is very important. Lakshya Roy has my warmest and sincerest recommendations.",
-    author: {
-      name: "Jesper Simonsen",
-      designation: "Founder of LifeBonder!",
-      profileImage: "Jesper",
-      linkedin: "https://www.linkedin.com/in/jesper-simonsen-4092915/",
-    },
-    reviewee: {
-      name: "Lakshya Roy",
-      linkedin: "https://www.linkedin.com/in/lakshya-roy729/",
-    },
-  },
-};

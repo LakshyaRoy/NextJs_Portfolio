@@ -201,9 +201,12 @@ const Page = () => {
             )}
 
             {/* mobile view */}
-            <div className="block md:hidden">
+            <div className="block md:hidden ">
               {filteredData?.map((item: any) => (
-                <div key={item.id} className="p-4 border-b border-white/10">
+                <div
+                  key={item.id}
+                  className="p-4 border-b border-white/10 relative"
+                >
                   {/* Container with max-width and overflow control */}
                   <div className="flex items-start w-full">
                     {/* Image Section */}

@@ -119,41 +119,55 @@ const Page = () => {
               <div className="text-left">Actions</div>
             </div>
 
-            {filteredData?.map((data: any, i: number) => {
-              return (
-                <div
-                  key={i}
-                  className="relative grid grid-cols-5 gap-4 py-3 text-sm px-5 border-b border-white/10 last:border-b-0 items-center min-w-[640px]"
-                >
-                  <div className="text-white/80">{i + 1}</div>
-                  <div className="text-left text-white/80">{data.name}</div>
-                  <div className="text-left text-white/80">
-                    <Image
-                      width={50}
-                      height={50}
-                      src={data.image}
-                      alt={data.name}
-                    />
-                  </div>
-                  <div className="text-left text-white/80">
-                    {data.description}
-                  </div>
-                  <div
-                    className="flex-shrink-0 cursor-pointer text-white/50 hover:text-white"
-                    onClick={() => toggleMenu(data.id)}
-                  >
-                    <CiMenuKebab />
-                    <TechstackOptionsMenu
-                      isOpen={openMenuId === data.id}
-                      onClose={() => setOpenMenuId(null)}
-                      id={data.id}
-                      imageId={data.imageId}
-                      setFilteredData={setFilteredData}
-                    />
-                  </div>
+            {loading && (
+              <div>
+                <div className="w-full h-[50vh] flex items-center justify-center">
+                  <div className="text-white text-lg">Loading...</div>
                 </div>
-              );
-            })}
+              </div>
+            )}
+
+            {filteredData?.length > 0 ? (
+              filteredData?.map((data: any, i: number) => {
+                return (
+                  <div
+                    key={i}
+                    className="relative grid grid-cols-5 gap-4 py-3 text-sm px-5 border-b border-white/10 last:border-b-0 items-center min-w-[640px]"
+                  >
+                    <div className="text-white/80">{i + 1}</div>
+                    <div className="text-left text-white/80">{data.name}</div>
+                    <div className="text-left text-white/80">
+                      <Image
+                        width={50}
+                        height={50}
+                        src={data.image}
+                        alt={data.name}
+                      />
+                    </div>
+                    <div className="text-left text-white/80">
+                      {data.description}
+                    </div>
+                    <div
+                      className="flex-shrink-0 cursor-pointer text-white/50 hover:text-white"
+                      onClick={() => toggleMenu(data.id)}
+                    >
+                      <CiMenuKebab />
+                      <TechstackOptionsMenu
+                        isOpen={openMenuId === data.id}
+                        onClose={() => setOpenMenuId(null)}
+                        id={data.id}
+                        imageId={data.imageId}
+                        setFilteredData={setFilteredData}
+                      />
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="w-full h-[50vh] flex items-center justify-center ">
+                <div className="text-white text-lg">No Techstack found</div>
+              </div>
+            )}
           </div>
 
           {/* mobile */}

@@ -4,34 +4,90 @@ import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import HeaderText from "@/components/MicroComponents/HeaderText";
 import SearchInput from "@/components/MicroComponents/SearchInput";
 import SortInput from "@/components/MicroComponents/SortInput";
+import { firestore } from "@/firebase/Firebase";
+import { useStore } from "@/zustand/store";
+import { deleteDoc, doc } from "firebase/firestore";
+import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 
 const Page = () => {
-  const data = [
-    {
-      quote:
-        "Lakshya Roy has been at LifeBonder since December 4, 2023, until May 31, 2024. Lakshya has been very reliable all through his internship, and more skilled than you would expect from an intern. He has done a great job helping us improve and optimize our website. If there is something he does not know or have experience in, then he researches and finds a solution. Having Lakshya Roy with us has been a positive experience. He communicates clearly and is always responsive, something that is very important. Lakshya Roy has my warmest and sincerest recommendations.",
-      author: {
-        name: "Jesper Simonsen",
-        designation: "Founder of LifeBonder!",
-        profileImage:
-          "https://images.unsplash.com/photo-1541516160071-4bb0c5af65ba?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHBob3RvZ3JhcGh5fGVufDB8fDB8fHwy",
-        linkedin: "https://www.linkedin.com/in/jesper-simonsen-4092915/",
-      },
-      reviewee: {
-        name: "Lakshya Roy",
-        linkedin: "https://www.linkedin.com/in/lakshya-roy729/",
-      },
-      id: 1,
-    },
-  ];
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+
+  const [filteredData, setFilteredData] = useState<any | []>([]);
+  const { fetchTestimonial, testimonial } = useStore();
+  const { data, loading } = testimonial;
+
+  const fetchtestimonial = async () => {
+    if (!data.length) {
+      await fetchTestimonial();
+    }
+  };
+
+  useEffect(() => {
+    fetchtestimonial();
+  }, []);
+
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
+
   const toggleMenu = (id: number) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openMenuId) setOpenMenuId(null);
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [openMenuId]);
+
+  const handleSearchData = (value: string) => {
+    const trimmedValue = value.trim().toLowerCase();
+
+    if (trimmedValue === "") {
+      setFilteredData(data);
+      return;
+    }
+
+    const filterData = data.filter((item) => {
+      return (
+        item?.author?.name?.toLowerCase().includes(trimmedValue) ||
+        item?.reviewee?.name?.toLowerCase().includes(trimmedValue)
+      );
+    });
+
+    setFilteredData(filterData);
+  };
+
+  const handleSortedData = (value: string) => {
+    const sortedData = [...filteredData].sort((a: any, b: any) => {
+      const timeA =
+        a.createdAt.seconds * 1000 + a.createdAt?.nanoseconds / 1000000;
+      const timeB =
+        b.createdAt.seconds * 1000 + b.createdAt?.nanoseconds / 1000000;
+
+      if (value === "newest") {
+        return timeB - timeA; // Sort newest first
+      } else if (value === "oldest") {
+        return timeA - timeB; // Sort oldest first
+      } else if (value === "a-z") {
+        return a?.author?.name.localeCompare(b?.author?.name);
+      } else if (value === "z-a") {
+        return b?.author?.name.localeCompare(a?.author?.name);
+      }
+      return 0;
+    });
+    console.log("Sorted data:", sortedData);
+    setFilteredData(sortedData);
+  };
+
   return (
     <DashboardLayout>
       <div className="w-full max-w-7xl mx-auto ">
@@ -43,10 +99,10 @@ const Page = () => {
             {/* Search and Sort */}
             <div className="flex flex-wrap items-center gap-4 w-full sm:w-3/4">
               <div className="w-full sm:flex-1">
-                <SearchInput />
+                <SearchInput onSearch={handleSearchData} />
               </div>
               <div className="w-full sm:flex-1">
-                <SortInput />
+                <SortInput onSortChange={handleSortedData} />
               </div>
             </div>
           </div>
@@ -54,7 +110,9 @@ const Page = () => {
 
         <section className="bg-[#212121] rounded-lg ">
           <div className="flex items-center justify-between p-4 border-b border-white/10">
-            <h2 className="text-lg font-semibold text-white">2 Testimonials</h2>
+            <h2 className="text-lg font-semibold text-white">
+              {filteredData?.length || 0} Testimonials
+            </h2>
             <Link
               href="/add/testimonials"
               className="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-md px-3 py-2 transition-colors"
@@ -75,79 +133,168 @@ const Page = () => {
               <div className="text-left">Actions</div>
             </div>
 
-            {/* Data Rows */}
-            {data?.map((item, index) => {
-              return (
-                <div key={item.id} className="w-full">
-                  {/* Desktop View */}
-                  <div className="relative hidden md:grid  grid-cols-6 gap-4 py-3 text-sm px-5 border-b border-white/10 last:border-b-0 items-center md:grid-cols-6 md:gap-4 ">
-                    <div className="hidden md:block text-white/80">
-                      {index + 1}
-                    </div>
-                    <div className="hidden md:block">
-                      <img
-                        src={item?.author?.profileImage}
-                        alt={item?.author?.name}
-                        className="w-10 h-10 object-cover rounded-md"
-                      />
-                    </div>
-                    <div className="hidden md:block text-white">
-                      {item?.author?.name}
-                    </div>
-                    <div className="hidden md:block text-white/80">
-                      {item?.author?.designation}
-                    </div>
-                    <div className="hidden md:block text-white/80">
-                      {item?.reviewee?.name}
-                    </div>
-                    <div className="hidden md:block relative">
-                      <div
-                        className="cursor-pointer text-white/50 hover:text-white"
-                        onClick={() => toggleMenu(item?.id)}
-                      >
-                        <CiMenuKebab />
-                      </div>
-                    </div>
-                  </div>
+            {loading && (
+              <div>
+                <div className="w-full h-[50vh] flex items-center justify-center">
+                  <div className="text-white text-lg">Loading...</div>
+                </div>
+              </div>
+            )}
 
-                  {/* Mobile View */}
-                  <div className="block md:hidden w-full p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-white font-semibold flex justify-start items-center gap-4 w-full">
-                        <div className="w-10 h-10 overflow-hidden rounded-full bg-white border border-white-200">
-                          <img
-                            src={item?.author?.profileImage}
-                            alt={item?.author?.name}
-                            className="w-full h-full object-cover overflow-hidden"
-                          />
-                        </div>
-                        <p className="w-full">{item?.author?.name}</p>
+            {/* Data Rows */}
+            {filteredData?.length > 0 ? (
+              filteredData?.map((item: any, index: number) => {
+                return (
+                  <div key={item.id} className="w-full">
+                    {/* Desktop View */}
+                    <div className="relative hidden md:grid  grid-cols-6 gap-4 py-3 text-sm px-5 border-b border-white/10 last:border-b-0 items-center md:grid-cols-6 md:gap-4 ">
+                      <div className="hidden md:block text-white/80">
+                        {index + 1}
                       </div>
-                      <div className="cursor-pointer text-white/50 hover:text-white">
-                        <CiMenuKebab />
+                      <div className="hidden md:block">
+                        <Image
+                          width={50}
+                          height={50}
+                          src={item?.author?.image}
+                          alt={item?.author?.name}
+                          className="w-10 h-10 object-cover rounded-md"
+                        />
                       </div>
-                    </div>
-                    <div className="mt-2 text-white/80 text-sm">
-                      <div>
-                        <span className="font-semibold">S No:</span> {index + 1}
+                      <div className="hidden md:block text-white">
+                        {item?.author?.name}
                       </div>
-                      <div>
-                        <span className="font-semibold">Reviewee:</span>{" "}
-                        {item?.reviewee?.name}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Designation:</span>{" "}
+                      <div className="hidden md:block text-white/80">
                         {item?.author?.designation}
                       </div>
+                      <div className="hidden md:block text-white/80">
+                        {item?.reviewee?.name}
+                      </div>
+                      <div className="hidden md:block relative">
+                        <div
+                          className="flex-shrink-0 cursor-pointer text-white/50 hover:text-white"
+                          onClick={() => toggleMenu(item.id)}
+                        >
+                          <CiMenuKebab />
+                          <TestimonialOptionsMenu
+                            isOpen={openMenuId === item.id}
+                            onClose={() => setOpenMenuId(null)}
+                            id={item.id}
+                            imageId={item.imageId}
+                            setFilteredData={setFilteredData}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mobile View */}
+                    <div className="block md:hidden w-full p-4 relative">
+                      <div className="flex items-center justify-between">
+                        <div className="text-white font-semibold flex justify-start items-center gap-4 w-full">
+                          <div className="w-10 h-10 overflow-hidden rounded-full bg-white border border-white-200">
+                            <Image
+                              width={50}
+                              height={50}
+                              src={item?.author?.image}
+                              alt={item?.author?.name}
+                              className="w-full h-full object-cover overflow-hidden"
+                            />
+                          </div>
+                          <p className="w-full">{item?.author?.name}</p>
+                        </div>
+                        <div
+                          className="flex-shrink-0 cursor-pointer text-white/50 hover:text-white"
+                          onClick={() => toggleMenu(item.id)}
+                        >
+                          <CiMenuKebab />
+                          <TestimonialOptionsMenu
+                            isOpen={openMenuId === item.id}
+                            onClose={() => setOpenMenuId(null)}
+                            id={item.id}
+                            imageId={item.imageId}
+                            setFilteredData={setFilteredData}
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4 text-white/80 text-sm flex flex-col gap-2">
+                        <div>
+                          <span className="font-semibold">S No:</span>{" "}
+                          {index + 1}
+                        </div>
+                        <div>
+                          <span className="font-semibold">Reviewee:</span>{" "}
+                          {item?.reviewee?.name}
+                        </div>
+                        <div>
+                          <span className="font-semibold">Designation:</span>{" "}
+                          {item?.author?.designation}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className="w-full h-[50vh] flex items-center justify-center ">
+                <div className="text-white text-lg">No Testimonials found</div>
+              </div>
+            )}
           </div>
         </section>
       </div>
     </DashboardLayout>
+  );
+};
+
+interface TestimonialOptions {
+  isOpen: boolean;
+  id: string;
+  imageId: string;
+  onClose: () => void;
+  setFilteredData: (data: any) => void;
+}
+
+const TestimonialOptionsMenu: React.FC<TestimonialOptions> = ({
+  isOpen,
+  onClose,
+  id,
+  imageId,
+  setFilteredData,
+}) => {
+  if (!isOpen) return null;
+
+  const handleDelete = async (id: string, imageId: string) => {
+    try {
+      // Delete from Firestore
+      const docRef = doc(firestore, "testimonials", id);
+      await deleteDoc(docRef);
+      setFilteredData((prevData: any) =>
+        prevData.filter((item: any) => item.id !== id)
+      );
+    } catch (error) {
+      console.error("Error during delete operation:", error);
+    } finally {
+      onClose();
+    }
+  };
+
+  return (
+    <div className="absolute top-10 right-10 md:top-0 md:right-0  lg:right-12 bg-[#333] border border-white/10 rounded-md shadow-lg z-20">
+      <ul className="py-1">
+        <Link
+          href={`/add/testimonials/${id}`}
+          className="flex items-center gap-2 px-4 py-2 hover:bg-[#444] cursor-pointer text-white/80 hover:text-white"
+          onClick={onClose}
+        >
+          <FaEdit /> Edit
+        </Link>
+        <li
+          className="flex items-center gap-2 px-4 py-2 hover:bg-[#444] cursor-pointer text-red-400 hover:text-red-300"
+          onClick={() => handleDelete(id, imageId)}
+        >
+          <FaTrash /> Delete
+        </li>
+      </ul>
+    </div>
   );
 };
 
