@@ -10,7 +10,7 @@ import LakshyaRoy from "@/assets/LakshyaRoy.png";
 
 const Hero = () => {
   return (
-    <div className=" pt-20 relative" id="home">
+    <div className=" pt-16 sm:pt-20 relative" id="home">
       <div>
         <Spotlight
           className="top-[5rem] left-[4rem] sm:-top-40 sm:-left-10 md:-left-32 md:-top-20 h-screen"
@@ -30,29 +30,35 @@ const Hero = () => {
       </div>
       <div className="flex justify-center relative my-20 z-10 items-center gap-10">
         {/* left */}
-        <div className=" w-full sm:w-1/2 md:max-w-2xl flex flex-col lg:max-w-[60vw] items-left justify-center">
-          <TextGenerateEffect
-            className="text-left capitalize text-[40px] md:text-5xl  text-blue-100"
-            words="with figma wireframes in hand i bring website to life!"
-          />
-          <p className="text-left capitalize md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
-            hi, I&apos;m Lakshya Roy, a Frontend Developer from India.
-          </p>
-          <div className=" flex flex-col sm:flex-row  justify-start items-start sm:items-center gap-4">
-            <Link href="/about" className="w-fit">
-              <TailwindcssButtons
-                title="Know About me!"
-                icon={<FaLocationArrow />}
-                position="right"
-              />
-            </Link>
-            <Link href="/contact" className="w-fit">
-              <TailwindcssButtons
-                title="Let's Talk!"
-                icon={<FaLocationArrow />}
-                position="right"
-              />
-            </Link>
+        <div className=" w-full sm:w-1/2 md:max-w-2xl flex flex-row lg:max-w-[60vw] items-start justify-start sm:justify-center gap-2 sm:gap-10">
+          <div className="flex flex-col justify-center items-center mt-5">
+            <div className="w-5 h-5 rounded-full bg-[#915eff]"></div>
+            <div className="w-1 sm:h-80 h-40 bg-violet-gradient"></div>
+          </div>
+          <div>
+            <TextGenerateEffect
+              className="text-left capitalize text-3xl sm:text-[40px] md:text-5xl  text-blue-100"
+              words="with figma wireframes in hand i bring website to life!"
+            />
+            <p className="text-left capitalize md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
+              hi, I&apos;m Lakshya Roy, a Frontend Developer from India.
+            </p>
+            <div className=" flex flex-col sm:flex-row  justify-start items-start sm:items-center gap-4">
+              <Link href="/about" className="w-72 sm:w-fit">
+                <TailwindcssButtons
+                  title="Know About me!"
+                  icon={<FaLocationArrow />}
+                  position="right"
+                />
+              </Link>
+              <Link href="/contact" className="w-72 sm:w-fit">
+                <TailwindcssButtons
+                  title="Let's Talk!"
+                  icon={<FaLocationArrow />}
+                  position="right"
+                />
+              </Link>
+            </div>
           </div>
         </div>
         {/* right */}

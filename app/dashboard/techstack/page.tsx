@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -28,7 +29,7 @@ const Page = () => {
     techstackApi();
   }, []);
 
-  console.log(data);
+  // console.log(data);
   useEffect(() => {
     setFilteredData(data);
   }, [data]);
@@ -75,7 +76,7 @@ const Page = () => {
       }
       return 0;
     });
-    console.log("Sorted data:", sortedData);
+    // console.log("Sorted data:", sortedData);
     setFilteredData(sortedData);
   };
 
@@ -86,7 +87,7 @@ const Page = () => {
           <div className="w-full flex flex-wrap items-center justify-between gap-4">
             {/* Header Text */}
 
-            <HeaderText name="All Projects" className="w-full sm:w-1/3" />
+            <HeaderText name="All TechStack" className="w-full sm:w-1/3" />
             <div className="flex flex-wrap items-center gap-4 w-full sm:w-3/4">
               <div className="w-full sm:flex-1">
                 <SearchInput onSearch={handleSearchData} />
@@ -206,6 +207,7 @@ const Page = () => {
           </div>
         </section>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };
@@ -235,8 +237,10 @@ const TechstackOptionsMenu: React.FC<TechStackOptions> = ({
       setFilteredData((prevData: any) =>
         prevData.filter((item: any) => item.id !== id)
       );
+      toast.success("Techstack deleted successfully!");
     } catch (error) {
       console.error("Error during delete operation:", error);
+      toast.error("Error deleting Techstack!");
     } finally {
       onClose();
     }

@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { firestore } from "@/firebase/Firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import Image from "next/image";
+import { toast, ToastContainer } from "react-toastify";
 
 interface CertificateOptions {
   isOpen: boolean;
@@ -36,8 +38,10 @@ const CertificateOptionsMenu: React.FC<CertificateOptions> = ({
       const docRef = doc(firestore, "experiences", id);
       await deleteDoc(docRef);
       setFilteredData((prevData) => prevData.filter((item) => item.id !== id));
+      toast.success("Experience deleted successfully!");
     } catch (error) {
       console.error("Error during delete operation:", error);
+      toast.error("Error deleting experience!");
     } finally {
       setTimeout(onClose, 100); // Delay closing the menu
     }
@@ -120,7 +124,7 @@ const Page = () => {
       return 0;
     });
 
-    console.log("Sorted data:", sortedData);
+    // console.log("Sorted data:", sortedData);
     setFilteredData(sortedData);
   };
 
@@ -143,7 +147,7 @@ const Page = () => {
         <section className="mb-8 w-full h-full">
           <div className="w-full flex flex-wrap items-center justify-between gap-4">
             {/* Header Text */}
-            <HeaderText name="All Testimonials" className="w-full sm:w-1/3" />
+            <HeaderText name="All Experiences" className="w-full sm:w-1/3" />
             {/* Search and Sort */}
             <div className="flex flex-wrap items-center gap-4 w-full sm:w-3/4">
               <div className="w-full sm:flex-1">
@@ -191,7 +195,7 @@ const Page = () => {
 
             {!loading && filteredData?.length === 0 && (
               <div className="w-full h-[50vh] flex items-center justify-center ">
-                <div className="text-white text-lg">No certificates found</div>
+                <div className="text-white text-lg">No Experiences found</div>
               </div>
             )}
             {/* desktop view */}
@@ -202,10 +206,12 @@ const Page = () => {
               >
                 <div className="text-left">{index + 1}</div>
                 <div className="text-left ">
-                  <img
+                  <Image
                     src={`${item.icon}`}
                     alt={item.icon}
                     className="w-10 h-10 rounded-md overflow-hidden object-cover"
+                    width={50}
+                    height={50}
                   />
                 </div>
                 <div className="text-left">{item.company_name}</div>
@@ -248,10 +254,12 @@ const Page = () => {
                   {/* Item header with icon and details */}
                   <div className="flex items-center space-x-4 justify-between">
                     {/* Icon Section */}
-                    <img
+                    <Image
                       src={item.icon}
                       alt="Company Icon"
                       className="w-16 h-16 object-cover rounded-md"
+                      width={50}
+                      height={50}
                     />
 
                     {/* Details Section */}
@@ -294,6 +302,7 @@ const Page = () => {
           </div>
         </section>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

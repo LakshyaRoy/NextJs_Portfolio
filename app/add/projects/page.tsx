@@ -11,6 +11,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { IoIosSend, IoMdCreate, IoMdTrash } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   interface FormData {
@@ -36,7 +37,7 @@ const Page = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [tagEditIndex, setTagEditIndex] = useState<number | null>(null);
 
-  console.log(tags);
+  // console.log(tags);
 
   const [tagsDetail, setTagsDetail] = useState<TagsDetail>({
     name: "",
@@ -86,7 +87,7 @@ const Page = () => {
     setTagEditIndex(index);
     setIsEditing(true);
     setTagsDetail({ name: data.name, color: data.color });
-    console.log(data);
+    // console.log(data);
   };
 
   const handleTags = (
@@ -197,11 +198,11 @@ const Page = () => {
     e.preventDefault();
 
     if (!image) {
-      return alert("Please select an image");
+      return toast.error("Please select an image");
     }
 
     if (handleError()) {
-      return alert("Form submission failed due to validation errors");
+      return toast.error("Form submission failed due to validation errors");
     }
 
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -256,14 +257,17 @@ const Page = () => {
       try {
         setLoading(true);
         const addProject = await addDoc(db, docData);
-        console.log("Document added", addProject);
-        await fetchProjects();
+        if (addProject) {
+          toast.success("Certificate added successfully");
+          await fetchProjects();
+        }
       } catch (error) {
         console.error("Error adding document:", error);
+        toast.error("Failed to add certificate");
       }
     } catch (err) {
       console.error("Error during image upload:", err);
-      alert("Failed to add certificate");
+      toast.error("Failed to add certificate");
     } finally {
       setLoading(false);
     }
@@ -276,7 +280,7 @@ const Page = () => {
       image,
       tags,
     };
-    console.log(data);
+    // console.log(data);
 
     // Reset Form
     setFormData({
@@ -516,6 +520,7 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

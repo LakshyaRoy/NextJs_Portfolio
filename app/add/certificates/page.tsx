@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { IoIosSend, IoMdAdd } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
 import { useStore } from "@/zustand/store";
-
+import { ToastContainer, toast } from "react-toastify";
 const AddCertificates: React.FC = () => {
   interface FormData {
     name: string;
@@ -81,10 +81,10 @@ const AddCertificates: React.FC = () => {
     e.preventDefault();
 
     if (!image) {
-      return alert("Please select an image");
+      return toast.error("Please select an image");
     }
     if (handleError()) {
-      return alert("Form submission failed due to validation errors");
+      return toast.error("Form submission failed due to validation errors");
     }
 
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -146,8 +146,11 @@ const AddCertificates: React.FC = () => {
       try {
         setLoading(true);
         const addCertificate = await addDoc(db, docData);
-        console.log("Document added", addCertificate);
-        certificateApi();
+        // console.log("Document added", addCertificate);
+        if (addCertificate) {
+          toast.success("Document added successfully!");
+          certificateApi();
+        }
       } catch (error) {
         console.error("Error adding document:", error);
       } finally {
@@ -155,6 +158,7 @@ const AddCertificates: React.FC = () => {
       }
     } catch (err) {
       console.error("Error during image upload:", err);
+      toast.error("Failed to add certificate");
       alert("Failed to add certificate");
     }
 
@@ -265,6 +269,7 @@ const AddCertificates: React.FC = () => {
           </section>
         </div>
       </main>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

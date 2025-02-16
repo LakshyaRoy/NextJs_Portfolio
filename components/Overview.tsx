@@ -20,9 +20,9 @@ import {
 import "@/app/globals.css";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Computer from "./Model/Computer";
-import { certificates } from "@/data";
+// import { certificates } from "@/data";
 
-const Overview = () => {
+const Overview = ({ certificates }: { certificates: any }) => {
   const styles = {
     sectionHeadText: "text-white font-black  sm:text-[50px] text-[30px]",
     sectionSubText:
@@ -56,7 +56,13 @@ const Overview = () => {
 
 export default Overview;
 
-const OverviewContainer = ({ styles, classes }) => {
+const OverviewContainer = ({
+  styles,
+  classes,
+}: {
+  styles: any;
+  classes: string;
+}) => {
   return (
     <div
       className={`mt-10 w-full h-full xl:h-96 bg-gray-800 reviewCard  rounded-lg relative p-5 xl:p-10  hover:bg-black-300 cursor-pointer transition-all duration-300 ${classes}`}
@@ -86,7 +92,13 @@ const OverviewContainer = ({ styles, classes }) => {
   );
 };
 
-const AcademicContainer = ({ styles, classes }) => {
+const AcademicContainer = ({
+  styles,
+  classes,
+}: {
+  styles: any;
+  classes: string;
+}) => {
   return (
     <div
       className={`mt-5 w-full h-full xl:h-[27rem] bg-gray-800 reviewCard  rounded-lg relative p-5 xl:p-10 hover:bg-black-300 cursor-pointer transition-all duration-300 ${classes}`}
@@ -115,7 +127,7 @@ const AcademicContainer = ({ styles, classes }) => {
   );
 };
 
-const CertificateContainer = ({ certificates }) => {
+const CertificateContainer = ({ certificates }: { certificates: any }) => {
   const swiperRef = useRef(null);
   const goPrev = () => {
     if (swiperRef.current) {
@@ -178,13 +190,12 @@ const CertificateContainer = ({ certificates }) => {
           },
         }}
       >
-        {certificates.map((certificate, i) => (
+        {certificates.map((certificate: any, i: number) => (
           <SwiperSlide key={i}>
             <Cards
-              name={certificate.CertificatesName}
               image={certificate.image}
-              certificateName={certificate.CertificatesName}
-              CertificateDescription={certificate.CertificatesDescription}
+              certificateName={certificate.name}
+              CertificateDescription={certificate.source}
             />
           </SwiperSlide>
         ))}

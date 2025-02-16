@@ -11,6 +11,7 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoIosSend } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   const [imagepreview, setImagepreview] = useState<string | null>(null);
@@ -41,7 +42,7 @@ const Page = () => {
     reviewee_linkedin: "",
   });
 
-  console.log(errorReviewee);
+  // console.log(errorReviewee);
   const [quote, setQuote] = useState<string>("");
   const [error, setError] = useState<Partial<authorData>>({});
   const [quoteError, setQuoteError] = useState<string>("");
@@ -167,10 +168,10 @@ const Page = () => {
 
     try {
       if (handleError() || handleRevieweeError()) {
-        return alert("Please fill in all the required fields.");
+        return toast.error("Please fill in all the required fields.");
       }
       if (!image) {
-        return alert("Please select an image");
+        return toast.error("Please select an image");
       }
 
       const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -231,9 +232,11 @@ const Page = () => {
         const docRef = doc(firestore, "testimonials", id);
         await updateDoc(docRef, docData);
         await fetchTestimonial();
+        toast.success("Testimonial updated successfully");
         router.push("/dashboard/testimonials");
       } catch (firestoreError) {
         console.error("Firestore operation error:", firestoreError);
+        toast.error("Failed to update testimonial");
         throw firestoreError;
       } finally {
         setLoading(false);
@@ -409,6 +412,7 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

@@ -10,13 +10,12 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoIosSend } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
-  const [imageId, setImageid] = useState<string | null>(null);
 
-  const dbCollection = collection(firestore, "techstacks");
   interface FormData {
     name: string;
     description: string;
@@ -86,7 +85,7 @@ const Page = () => {
     try {
       // Validation for required fields
       if (!validation()) {
-        return alert("Please fill all the fields");
+        return toast.error("Please fill all the fields");
       }
 
       // Retrieve Cloudinary configuration from environment variables
@@ -133,7 +132,7 @@ const Page = () => {
         name: formData.name,
         description: formData.description,
         image: imageDetails?.secure_url || imagepreview,
-        public_id: imageDetails?.public_id || imageId || "",
+        public_id: imageDetails?.public_id || "",
         createdAt: new Date(),
       };
 
@@ -143,17 +142,17 @@ const Page = () => {
         const docRef = doc(firestore, "techstacks", id);
         await updateDoc(docRef, docData);
         await fetchTechstack();
+        toast.success(`Techstack updated successfully`);
         router.push("/dashboard/techstack");
         resetForm();
       } catch (firestoreError) {
         console.error("Firestore operation error:", firestoreError);
-        throw firestoreError;
       } finally {
         setLoading(false);
       }
     } catch (error) {
       console.error("Error during submission:", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -276,6 +275,7 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

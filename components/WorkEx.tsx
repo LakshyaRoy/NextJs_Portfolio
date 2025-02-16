@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { experiences } from "@/data";
+// import { experiences } from "@/data";
 import { makeTextPurple } from "@/utils/makeTextPurple";
 import Image from "next/image";
 import React from "react";
@@ -12,7 +12,7 @@ import {
 } from "react-vertical-timeline-component/dist-es6";
 import "react-vertical-timeline-component/style.min.css";
 
-const WorkEx = () => {
+const WorkEx = ({ experiences }: { experiences: any }) => {
   return (
     <section
       className="w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24"
@@ -44,7 +44,7 @@ const WorkEx = () => {
                   icon={
                     <div className="flex justify-center items-center w-full h-full  ">
                       <Image
-                        src="https://lifebonder.com/images/logo-logotext-small.webp"
+                        src={expo.icon}
                         alt={expo.company_name}
                         className="w-[60%] h-[60%] object-contain "
                         width={100}

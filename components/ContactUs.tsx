@@ -9,10 +9,7 @@ import Image from "next/image";
 const ContactUs = () => {
   return (
     <div>
-      <main
-        className="container mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16  h-full"
-        id="contact"
-      >
+      <main className="container mx-auto pt-32 pb-16  h-full px-0" id="contact">
         <section className="flex flex-col-reverse  md:flex-row items-center justify-between gap-8 mb-16 w-full">
           <div className="w-full md:w-1/2 text-left">
             <div className=" bg-opacity-30 backdrop-filter backdrop-blur-lg p-6 rounded-lg max-w-lg shadow-lg border border-white border-opacity-20 mx-auto">

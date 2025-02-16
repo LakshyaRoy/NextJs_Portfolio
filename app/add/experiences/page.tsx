@@ -9,6 +9,7 @@ import TextArea from "@/components/MicroComponents/TextArea";
 import { IoIosSend } from "react-icons/io";
 import { addDoc, collection } from "firebase/firestore";
 import { firestore } from "@/firebase/Firebase";
+import { toast, ToastContainer } from "react-toastify";
 const Page = () => {
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
@@ -96,15 +97,19 @@ const Page = () => {
     return hasError;
   };
 
-  console.log("Firestore Instance:", firestore);
-  console.log("Collection Reference:", dbCollections);
+  // console.log("Firestore Instance:", firestore);
+  // console.log("Collection Reference:", dbCollections);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!image) {
       setImageError("Please enter an image");
+      toast.error("Please enter an image");
       return;
+    }
+    if (handleError()) {
+      return toast.error("Form submission failed due to validation errors");
     }
 
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -142,13 +147,14 @@ const Page = () => {
         createdAt: new Date(),
       };
 
-      console.log("Document Data:", JSON.stringify(docData, null, 2));
+      // console.log("Document Data:", JSON.stringify(docData, null, 2));
 
       const addCertificate = await addDoc(dbCollections, docData);
-      console.log("Document added successfully:", addCertificate.id);
+      // console.log("Document added successfully:", addCertificate.id);
+      toast.success("Certificate added successfully");
     } catch (error) {
       console.error("Error during submission:", error);
-      alert("Failed to submit data");
+      toast.error("Failed to submit data");
     } finally {
       // Reset form
       setFormData({
@@ -282,20 +288,9 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
-};
-
-const data = {
-  title: "Web Developer",
-  company_name: "LifeBonder",
-  icon: "LifeBonder",
-  iconBg: "#383E56",
-  date: "Dec 2023 to Current",
-  points: [
-    "Managed Lifebonder's site for optimal function and user experience. Oversaw updates, design, and performance, utilizing FileZilla FTP for precise version updates and efficient feature integration.",
-    "Guided website version control, ensured accurate updates, and secure deployments via FileZilla FTP. Collaborated for streamlined procedures, maintaining current tech and content.",
-  ],
 };
 
 export default Page;

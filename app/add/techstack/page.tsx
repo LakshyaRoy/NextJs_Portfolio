@@ -9,6 +9,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { IoIosSend } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -80,11 +81,11 @@ const Page = () => {
     e.preventDefault();
 
     if (!image) {
-      return alert("Please select an image");
+      return toast.error("Please select an image");
     }
 
     if (!validation()) {
-      return;
+      return toast.error("Please fill all the fields");
     }
 
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -141,10 +142,13 @@ const Page = () => {
       try {
         setLaoding(true);
         const addTeckStack = await addDoc(dbCollection, docData);
-        await fetchTechstack();
-        console.log("Document added", addTeckStack);
+        if (addTeckStack) {
+          await fetchTechstack();
+          toast.success("TechStack added successfully");
+        }
       } catch (error) {
-        console.error("Error adding document:", error);
+        console.error("Error adding TechStack:", error);
+        toast.error("Failed to add TechStack");
       } finally {
         setLaoding(false);
       }
@@ -256,6 +260,7 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

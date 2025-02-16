@@ -25,7 +25,7 @@ const Cards = ({
   image: string;
   source_code_link: string;
   website_link: string;
-  certificateName?: string;
+  certificateName: string;
   CertificateDescription?: string;
 }) => {
   return (
@@ -39,6 +39,8 @@ const Cards = ({
             <Image
               src={image}
               alt={name}
+              width={1000}
+              height={1000}
               className="w-full h-full object-cover rounded-xl"
               fill
             />
@@ -89,13 +91,14 @@ const Cards = ({
           <div className="relative w-full h-[200px] sm:h-[230px]">
             <Image
               src={image}
-              alt={name}
+              alt={certificateName}
+              width={1000}
+              height={1000}
               className="w-full h-full object-cover rounded-xl"
-              fill={true}
             />
           </div>
           <div className="flex flex-col justify-center items-left bg-opacity-50 rounded-xl pt-3 sm:pt-4">
-            <h3 className="text-white font-bold text-lg sm:text-[24px]">
+            <h3 className="text-white font-bold text-lg sm:text-[24px] line-clamp-1">
               {certificateName}
             </h3>
             <p className="mt-2 text-secondary text-xs sm:text-[14px]">

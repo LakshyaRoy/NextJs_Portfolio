@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import TailwindcssButtons from "./ui/tailwindcss-buttons";
 import { FaGithub, FaLocationArrow } from "react-icons/fa";
 import Image from "next/image";
-import { Projects } from "@/data";
+// import { Projects } from "@/data";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -13,7 +13,7 @@ import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ProjectCard = () => {
+const ProjectCard = ({ Projects }: { Projects: any }) => {
   const showNumberings = (index: number) => {
     const num = index + 1;
     if (num < 10) {
@@ -34,9 +34,9 @@ const ProjectCard = () => {
           scrollTrigger: {
             trigger: card,
             start: "top 30%",
-            end: "bottom 50%",
+            end: "bottom 30%",
             scrub: true,
-            //  markers: true,
+            // markers: true,
           },
         });
       });
@@ -77,7 +77,7 @@ const ProjectCard = () => {
     });
 
     return () => media.revert(); // Cleanup on component unmount
-  }, []);
+  }, [Projects]);
 
   return (
     <div className="w-full h-full" id="project">
@@ -108,6 +108,9 @@ const ProjectCard = () => {
                     position="left"
                     icon={<FaGithub size={20} color="#fff" />}
                     title="GitHub Repo"
+                    handleClick={() =>
+                      window.open(project.source_code_link, "_blank")
+                    }
                   />
                   <TailwindcssButtons
                     icon={
@@ -115,6 +118,9 @@ const ProjectCard = () => {
                     }
                     position="right"
                     title="Live Preview"
+                    handleClick={() =>
+                      window.open(project.website_link, "_blank")
+                    }
                   />
                 </div>
               </div>
@@ -124,19 +130,16 @@ const ProjectCard = () => {
                 <Image
                   src={project.image}
                   alt="Project Image"
-                  width={500}
-                  height={500}
-                  className="w-full md:w-[90%] h-auto rounded-2xl shadow-lg"
+                  width={1000}
+                  height={1000}
+                  className="w-full md:w-[80%] h-auto max-h-80 rounded-2xl shadow-lg"
                 />
               </div>
 
               {/* Right Section */}
               <div className="w-full md:w-[33%] flex flex-col gap-4">
-                <p className=" leading-relaxed">
-                  This repository contains the source code and assets for a
-                  React-based Single Page Application (SPA) that allows users to
-                  select TV shows, view detailed information about them, and
-                  book movie tickets.
+                <p className=" leading-relaxed line-clamp-4">
+                  {project.description}
                 </p>
 
                 <div className="flex gap-2 mt-4 flex-wrap">
@@ -156,7 +159,7 @@ const ProjectCard = () => {
       })}
 
       <section className="flex justify-end">
-        <Link href="/project">
+        <Link href="https://github.com/LakshyaRoy" target="_blank">
           <TailwindcssButtons
             title="More Projects"
             icon={<FaLocationArrow />}

@@ -11,6 +11,8 @@ import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebase/Firebase";
 import { useParams, useRouter } from "next/navigation";
 import { useStore } from "@/zustand/store";
+import { toast, ToastContainer } from "react-toastify";
+
 const Page = () => {
   const [image, setImage] = useState<File | null>(null);
   const [imagepreview, setImagepreview] = useState<string | null>(null);
@@ -111,44 +113,37 @@ const Page = () => {
     e.preventDefault();
 
     try {
-      if (!image) {
-        setImageError("Please enter an image");
+      // Validate image exists (either preview or new image)
+      if (!imagepreview && !image) {
+        setImageError("Please select an image");
+        toast.error("Please select an image");
         return;
       }
 
       if (handleError()) {
-        return alert("Form submission failed due to validation errors");
+        return toast.error("Form submission failed due to validation errors");
       }
 
-      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-      if (!uploadPreset) {
-        console.error("Cloudinary upload preset is missing");
-        return;
-      }
-
-      if (!uploadPreset || !cloudName) {
-        throw new Error("Missing Cloudinary configuration");
-      }
-
-      // Handle image upload if there's a new image
+      // Upload NEW image only if it exists
       let imageDetails = null;
-      if (!image) {
+      if (image) {
+        const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+        if (!uploadPreset || !cloudName) {
+          throw new Error("Missing Cloudinary configuration");
+        }
+
         const cloudinaryFormData = new FormData();
         cloudinaryFormData.append("file", image);
         cloudinaryFormData.append("upload_preset", uploadPreset);
 
         const response = await fetch(
           `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-          {
-            method: "POST",
-            body: cloudinaryFormData,
-          }
+          { method: "POST", body: cloudinaryFormData }
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to upload image");
-        }
+        if (!response.ok) throw new Error("Image upload failed");
 
         const data = await response.json();
         imageDetails = {
@@ -157,10 +152,11 @@ const Page = () => {
         };
       }
 
+      // Prepare document data
       const docData = {
         title: formData.title,
         company_name: formData.company_name,
-        icon: imageDetails?.secure_url || imagepreview,
+        icon: imageDetails?.secure_url || imagepreview, // Use existing preview if no new image
         iconId: imageDetails?.public_id || imageId,
         iconBg: formData.iconBg || "#000000",
         date: formData.date,
@@ -170,32 +166,35 @@ const Page = () => {
         updatedAt: new Date(),
       };
 
+      // Only reset state AFTER successful update
       try {
         setLoading(true);
         const docRef = doc(firestore, "experiences", id);
         await updateDoc(docRef, docData);
         await experienceApi();
+
+        toast.success("Experience updated successfully");
+
+        // Reset state here
+        setFormData({
+          title: "",
+          company_name: "",
+          iconBg: "",
+          date: "",
+          points: "",
+        });
+        setImage(null);
+        setImagepreview(null);
+        setImageError(null);
+        setError({});
+
         router.push("/dashboard/experiences");
-      } catch (error) {
-        console.log(error);
       } finally {
         setLoading(false);
       }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      // Reset form
-      setFormData({
-        title: "",
-        company_name: "",
-        iconBg: "",
-        date: "",
-        points: "",
-      });
-      setImage(null);
-      setImagepreview(null);
-      setImageError(null);
-      setError({});
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Update failed");
     }
   };
 
@@ -342,6 +341,7 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

@@ -12,6 +12,7 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoIosSend, IoMdCreate, IoMdTrash } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   interface FormData {
@@ -201,10 +202,10 @@ const Page = () => {
 
     try {
       if (handleError()) {
-        return alert("Form submission failed due to validation errors");
+        return toast.error("Form submission failed due to validation errors");
       }
       if (!imagepreview) {
-        return alert("Image is required");
+        return toast.error("Image is required");
       }
 
       const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -262,9 +263,11 @@ const Page = () => {
         const docRef = doc(firestore, "projects", id);
         await updateDoc(docRef, docData);
         await fetchProjects();
+        toast.success("Project updated successfully!");
         router.push("/dashboard/projects");
       } catch (firestoreError) {
         console.error("Firestore operation error:", firestoreError);
+        toast.error("Failed to update project");
         throw firestoreError;
       } finally {
         setLoading(false);
@@ -538,6 +541,7 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

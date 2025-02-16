@@ -72,17 +72,17 @@ const Page = () => {
     projectsApi();
   }, []);
 
-  console.log(
-    certificateData,
-    techstackData,
-    experienceData,
-    testimonialData,
-    projectsData
-  );
+  // console.log(
+  //   certificateData,
+  //   techstackData,
+  //   experienceData,
+  //   testimonialData,
+  //   projectsData
+  // );
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authentication, (user) => {
-      console.log(user);
+      // console.log(user);
 
       if (!user) {
         router.push("/login");

@@ -68,7 +68,7 @@ const Page = () => {
         formData.email,
         formData.password
       );
-      console.log("User has been created", user);
+      // console.log("User has been created", user);
 
       if (user) {
         router.push("/dashboard/home");

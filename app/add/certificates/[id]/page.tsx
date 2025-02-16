@@ -11,7 +11,7 @@ import { IoIosSend, IoMdAdd } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
 import { useStore } from "@/zustand/store";
 import { useParams, useRouter } from "next/navigation";
-
+import { ToastContainer, toast } from "react-toastify";
 const AddCertificates: React.FC = () => {
   interface FormData {
     name: string;
@@ -88,7 +88,7 @@ const AddCertificates: React.FC = () => {
       }
 
       if (handleError()) {
-        alert("Form submission failed due to validation errors");
+        toast.error("Form submission failed due to validation errors");
         return;
       }
 
@@ -140,6 +140,7 @@ const AddCertificates: React.FC = () => {
         setLoading(true);
         const docRef = doc(firestore, "certificates", id);
         await updateDoc(docRef, docData);
+        toast.success("Document updated successfully");
         await certificateApi();
       } catch (e) {
         console.error("Error during update certificate:", error);
@@ -155,9 +156,7 @@ const AddCertificates: React.FC = () => {
       router.push("/dashboard/certificates");
     } catch (error) {
       console.error("Error during form submission:", error);
-      alert(
-        error instanceof Error ? error.message : "Failed to update certificate"
-      );
+      toast.error("Form submission failed");
     }
   };
 
@@ -174,7 +173,7 @@ const AddCertificates: React.FC = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const certificateData = docSnap.data();
-          console.log(certificateData);
+          // console.log(certificateData);
           setFormData({
             name: certificateData.name,
             source: certificateData.source,
@@ -288,6 +287,7 @@ const AddCertificates: React.FC = () => {
           </section>
         </div>
       </main>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };

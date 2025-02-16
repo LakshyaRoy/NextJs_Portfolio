@@ -67,12 +67,12 @@ const Page = () => {
 
     try {
       setLoading(true);
-      const userCredential = await createUserWithEmailAndPassword(
-        authentication,
-        formData.email,
-        formData.password
-      );
-      console.log("User has been created", userCredential);
+      // const userCredential = await createUserWithEmailAndPassword(
+      //   authentication,
+      //   formData.email,
+      //   formData.password
+      // );
+      // console.log("User has been created", userCredential);
 
       setFormData({
         email: "",

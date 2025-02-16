@@ -49,7 +49,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-screen bg-[#101010] overflow-hidden">
+    <div className="flex flex-col md:flex-row w-full  bg-[#101010] overflow-hidden">
       {/* Mobile Menu Toggle */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-[#101010]">
         <h1 className="text-white text-xl font-bold">Dashboard</h1>
@@ -88,10 +88,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Main Content */}
       <main
-        className="flex-1 md:w-4/5 pt-20 p-4 md:p-5 overflow-y-auto min-h-screen"
+        className="flex-1 md:w-4/5 pt-20 p-4 md:p-5 overflow-y-auto h-screen"
         onClick={() => setIsMenuOpen(false)}
       >
-        <div className="w-full h-full min-h-[calc(100vh-5rem)]">{children}</div>
+        <div className="w-full ">{children}</div>
       </main>
     </div>
   );

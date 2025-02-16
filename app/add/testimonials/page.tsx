@@ -10,6 +10,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { IoIosSend } from "react-icons/io";
 import { IoArrowBack } from "react-icons/io5";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   const [imagepreview, setImagepreview] = useState<string | null>(null);
@@ -38,7 +39,7 @@ const Page = () => {
     reviewee_linkedin: "",
   });
 
-  console.log(errorReviewee);
+  // console.log(errorReviewee);
   const [quote, setQuote] = useState<string>("");
   const [error, setError] = useState<Partial<authorData>>({});
   const [quoteError, setQuoteError] = useState<string>("");
@@ -161,11 +162,11 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (handleError() || handleRevieweeError()) {
-      // alert("Form submission failed due to validation errors");
+      toast.error("Form submission failed due to validation errors");
       return;
     }
     if (!image) {
-      return alert("Please select an image");
+      return toast.error("Please select an image");
     }
 
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -225,14 +226,15 @@ const Page = () => {
       try {
         setLoading(true);
         const addCertificate = await addDoc(dbCollection, docData);
-        console.log("Document added", addCertificate);
+        // console.log("Document added", addCertificate);
         await fetchTestimonial();
+        toast.success("Testimonial added successfully");
       } catch (error) {
         console.error("Error adding document:", error);
       }
     } catch (err) {
       console.error("Error during image upload:", err);
-      alert("Failed to add certificate");
+      toast.error("Failed to add certificate");
     } finally {
       setLoading(false);
     }
@@ -308,7 +310,7 @@ const Page = () => {
                     error={error.name}
                     handleChange={handleAuthorChange}
                     name="name"
-                    placeholder="Enter Project name"
+                    placeholder="Enter Author name"
                   />
                   <InputField
                     formValue={author?.designation}
@@ -377,25 +379,9 @@ const Page = () => {
           </section>
         </div>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };
 
 export default Page;
-
-const data = {
-  review: {
-    quote:
-      "Lakshya Roy has been at LifeBonder since December 4, 2023, until May 31, 2024. Lakshya has been very reliable all through his internship, and more skilled than you would expect from an intern. He has done a great job helping us improve and optimize our website. If there is something he does not know or have experience in, then he researches and finds a solution. Having Lakshya Roy with us has been a positive experience. He communicates clearly and is always responsive, something that is very important. Lakshya Roy has my warmest and sincerest recommendations.",
-    author: {
-      name: "Jesper Simonsen",
-      designation: "Founder of LifeBonder!",
-      profileImage: "Jesper",
-      linkedin: "https://www.linkedin.com/in/jesper-simonsen-4092915/",
-    },
-    reviewee: {
-      name: "Lakshya Roy",
-      linkedin: "https://www.linkedin.com/in/lakshya-roy729/",
-    },
-  },
-};

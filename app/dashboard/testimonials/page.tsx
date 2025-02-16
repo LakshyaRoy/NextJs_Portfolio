@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
+import { toast, ToastContainer } from "react-toastify";
 
 const Page = () => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -84,7 +85,7 @@ const Page = () => {
       }
       return 0;
     });
-    console.log("Sorted data:", sortedData);
+    // console.log("Sorted data:", sortedData);
     setFilteredData(sortedData);
   };
 
@@ -241,6 +242,7 @@ const Page = () => {
           </div>
         </section>
       </div>
+      <ToastContainer theme="dark" />
     </DashboardLayout>
   );
 };
@@ -270,8 +272,10 @@ const TestimonialOptionsMenu: React.FC<TestimonialOptions> = ({
       setFilteredData((prevData: any) =>
         prevData.filter((item: any) => item.id !== id)
       );
+      toast.success("Testimonials deleted successfully");
     } catch (error) {
       console.error("Error during delete operation:", error);
+      toast.error("Failed to delete testimonials");
     } finally {
       onClose();
     }

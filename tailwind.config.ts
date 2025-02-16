@@ -152,6 +152,10 @@ const config = {
             backgroundPosition: "350% 50%, 350% 50%",
           },
         },
+        glow: {
+          "0%, 100%": { boxShadow: "0 0 30px 2px #CBACF9" },
+          "50%": { boxShadow: "0 0 50px 5px #CBACF9" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -166,6 +170,7 @@ const config = {
         scroll:
           "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
         aurora: "aurora 60s linear infinite",
+        glow: "glow 2s infinite",
       },
       fontSize: {
         xs: "0.75rem", // 12px
@@ -181,6 +186,18 @@ const config = {
         "7xl": "4.5rem", // 72px
         "8xl": "6rem", // 96px
         "9xl": "8rem", // 128px
+      },
+      boxShadow: {
+        glow: "0 0 20px 5px #CBACF9",
+      },
+      textDecorationThickness: {
+        thin: "1px",
+        medium: "2px",
+        thick: "4px",
+      },
+      backgroundImage: {
+        "violet-gradient":
+          "linear-gradient(180deg, #804dee 0%, rgba(60, 51, 80, 0) 100%)",
       },
     },
   },

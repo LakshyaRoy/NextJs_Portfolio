@@ -12,6 +12,8 @@ import { useStore } from "@/zustand/store";
 import { deleteDoc, doc } from "firebase/firestore";
 import { firestore } from "@/firebase/Firebase";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { ToastContainer, toast } from "react-toastify";
 
 // Mock data - replace with actual data fetching logic
 
@@ -30,8 +32,6 @@ const CertificateOptionsMenu: React.FC<CertificateOptions> = ({
   imageId,
   setFilteredData,
 }) => {
-  const router = useRouter();
-
   if (!isOpen) return null;
 
   const handleDelete = async (id: string, imageId: string) => {
@@ -42,8 +42,10 @@ const CertificateOptionsMenu: React.FC<CertificateOptions> = ({
       setFilteredData((prevData: any) =>
         prevData.filter((item: any) => item.id !== id)
       );
+      toast.success("Certificate deleted successfully!");
     } catch (error) {
       console.error("Error during delete operation:", error);
+      toast.error("Error deleting certificate!");
     } finally {
       onClose();
     }
@@ -76,7 +78,7 @@ const Certificates = () => {
   const { fetchCertificates, certificate } = useStore();
   const { data, loading } = certificate;
 
-  console.log(filteredData);
+  // console.log(filteredData);
   const certificateApi = async () => {
     if (!data.length) {
       await fetchCertificates();
@@ -185,10 +187,12 @@ const Certificates = () => {
                 className="p-4 border-b border-white/10 relative"
               >
                 <div className="flex items-center space-x-4">
-                  <img
+                  <Image
                     src={cert.image}
                     alt={cert.name}
                     className="w-16 h-16 object-cover rounded-md"
+                    width={200}
+                    height={200}
                   />
                   <div className="flex-grow">
                     <h3 className="text-white font-semibold">{cert.name}</h3>
@@ -248,10 +252,12 @@ const Certificates = () => {
               >
                 <div className="text-white/80">{index + 1}</div>
                 <div>
-                  <img
+                  <Image
                     src={cert.image}
                     alt={cert.name}
                     className="w-10 h-10 object-cover rounded-md"
+                    width={200}
+                    height={200}
                   />
                 </div>
 
@@ -277,6 +283,7 @@ const Certificates = () => {
           </div>
         </section>
       </div>
+      <ToastContainer autoClose={2000} theme="dark" />
     </DashboardLayout>
   );
 };
